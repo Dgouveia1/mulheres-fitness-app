@@ -1,0 +1,114 @@
+/* Global CSS - Variáveis e Reset - Identidade Espaço Mulher */
+
+:root {
+  /* Paleta de Cores - Espaço Mulher */
+  --primary-color: #ff0080; /* Magenta Vibrante (Logo) */
+  --primary-dark: #c50063;
+  --primary-light: #ff40ac;
+  --accent-color: #000000; /* Preto para contraste forte */
+  
+  --background-color: #fdf2f8; /* Fundo muito levemente rosado/branco */
+  --surface-color: #ffffff;
+  
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-on-primary: #ffffff;
+  
+  --error-color: #ef4444;
+  --success-color: #10b981;
+
+  /* Tipografia */
+  --font-main: 'Montserrat', sans-serif;
+  --font-script: 'Dancing Script', cursive; /* Para a marca "Mulher" */
+
+  /* Espaçamento e Bordas */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+
+  /* Sombras */
+  --shadow-sm: 0 2px 4px rgba(255, 0, 128, 0.05);
+  --shadow-md: 0 4px 12px rgba(255, 0, 128, 0.1);
+  --shadow-lg: 0 10px 25px rgba(255, 0, 128, 0.15);
+}
+
+/* Reset Básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  line-height: 1.5;
+  font-size: 14px; /* Tamanho base mobile */
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+/* Utilitários de Splash Screen (index.html) */
+.splash-screen {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+}
+
+.splash-logo {
+    font-size: 2rem;
+    font-weight: 800;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    margin-bottom: 2rem;
+}
+
+.splash-logo .script {
+    font-family: var(--font-script);
+    font-size: 3.5rem;
+    font-weight: 700;
+}
+
+.loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
