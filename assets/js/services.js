@@ -17,6 +17,8 @@ export const Services = {
     },
 
     async getVideoById(id) {
+        if (!id) return null; // Previne erro de ID nulo
+
         const { data, error } = await supabase
             .from('fitflix_videos')
             .select('*')
@@ -57,7 +59,6 @@ export const Services = {
     },
 
     async toggleLike(postId, userId) {
-        // Verifica se já curtiu
         const { data: existing } = await supabase
             .from('fitgran_likes')
             .select('id')
@@ -75,7 +76,6 @@ export const Services = {
             action = 'like';
         }
 
-        // Atualiza contador real
         const { count } = await supabase
             .from('fitgran_likes')
             .select('*', { count: 'exact', head: true })
@@ -115,15 +115,16 @@ export const Services = {
         return { data, error };
     },
 
-    // [NOVO] Upload de Imagem para o Bucket
+    // [CORREÇÃO] Upload de Imagem com Sanitização de Nome
+    // Isso evita que arquivos com espaços ou acentos quebrem a URL da imagem
     async uploadPostImage(file, userId) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${userId}/${fileName}`; // Pasta com ID do usuário
+        // Remove acentos e caracteres especiais do nome do arquivo
+        const cleanName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9.]/g, "_");
+        const fileName = `${Date.now()}_${cleanName}`;
+        const filePath = `${userId}/${fileName}`; 
 
-        // Upload para o bucket 'fitflix_post'
         const { data, error } = await supabase.storage
-            .from('fitflix_post')
+            .from('fitflix_post') // Certifique-se que o bucket tem esse nome no Supabase
             .upload(filePath, file);
 
         if (error) {
@@ -131,7 +132,6 @@ export const Services = {
             return null;
         }
 
-        // Gera URL pública
         const { data: { publicUrl } } = supabase.storage
             .from('fitflix_post')
             .getPublicUrl(filePath);
