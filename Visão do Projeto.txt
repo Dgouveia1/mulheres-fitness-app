@@ -1,0 +1,194 @@
+Aplicativo Web –  Mulheres fitness
+1. Introdução
+
+Este documento apresenta a visão geral do projeto de desenvolvimento de um aplicativo web completo voltado para academias e seus alunos. O objetivo é unificar, em uma única plataforma, funcionalidades de acompanhamento de treino, consumo de conteúdo fitness, interação social, gestão nutricional e administração operacional da academia.
+
+A solução será totalmente web, responsiva e com experiência similar à de um aplicativo mobile, construída exclusivamente em HTML, CSS e JavaScript puro, com Supabase como infraestrutura de backend e banco de dados.
+
+2. Objetivo Estratégico do Produto
+
+Criar um ecossistema digital que:
+
+Aumente o engajamento dos alunos;
+
+Facilite o acompanhamento de treinos, medidas e evolução;
+
+Fortaleça a comunidade da academia;
+
+Disponibilize conteúdo multimídia de alta qualidade;
+
+Amplie o controle e inteligência operacional da equipe;
+
+Forneça dados e métricas reais de uso para tomada de decisão.
+
+O resultado esperado é transformar a relação entre academia e alunos, oferecendo uma experiência contínua, personalizada e moderna.
+
+3. Visão Geral da Solução
+
+O sistema será dividido em dois aplicativos, dentro da mesma base e código:
+
+App do Usuário (Aluno)
+
+App da Equipe da Academia (Administração, Professores e Nutrição)
+
+Ambos farão login no mesmo local, mas terão rotas e permissões diferentes.
+
+4. Funcionalidades do App do Usuário
+
+O aluno terá acesso a um aplicativo com navegação fluida estilo app mobile, com menu inferior fixo contendo cinco seções principais:
+
+4.1 Treino
+
+Acompanhamento das rotinas de treino criadas pela equipe.
+
+Registro de execuções, séries, repetições, cargas e progresso.
+
+Visualização de fotos, vídeos e instruções de cada exercício.
+
+Dashboard com métricas de frequência e evolução física.
+
+4.2 Receitas
+
+Catálogo de receitas fitness com fotos, ingredientes e passo a passo.
+
+Filtragem por categorias.
+
+Sugestões personalizadas baseadas em dietas definidas pela equipe.
+
+4.3 FitGran (Rede Social da Academia)
+
+Publicação de fotos.
+
+Feed estilo Instagram.
+
+Curtidas e comentários.
+
+Perfis simples para interação entre alunos.
+
+4.4 FitFlix (Plataforma de Vídeos)
+
+Biblioteca de vídeos estilo Netflix.
+
+Categorias e playlists temáticas.
+
+Destaques e conteúdos recomendados.
+
+Sessão “Em breve”.
+
+4.5 Perfil
+
+Dados pessoais do aluno.
+
+Histórico de avaliações físicas e nutricionais.
+
+Medidas, peso e evolução corporal.
+
+Frequência e desempenho no treino.
+
+Além disso, todos os cliques do aluno serão registrados em uma tabela de auditoria para análise comportamental.
+
+5. Funcionalidades do App da Equipe
+
+O time de professores, nutricionistas e gestão terá um painel administrativo completo, incluindo:
+
+5.1 Gestão da FitFlix
+
+Upload de vídeos e imagens de capa.
+
+Criação de categorias, playlists e destaques.
+
+Controle de conteúdos futuros.
+
+5.2 Gestão das Receitas
+
+Criação, edição e exclusão.
+
+Upload de fotos.
+
+Organização em categorias e destaques.
+
+5.3 Gestão da FitGran
+
+Moderação de posts e comentários.
+
+5.4 Gestão de Treinos
+
+Criação e edição de treinos individuais.
+
+Acompanhamento da evolução do aluno em detalhes.
+
+Registro e consulta de séries, cargas e frequência.
+
+Criação de avaliações físicas.
+
+5.5 Avaliações Nutricionais
+
+Criação de avaliações e dietas personalizadas.
+
+Consulta de medidas e evolução corporal.
+
+Vinculação de dietas às sugestões de receitas.
+
+5.6 Gestão de Clientes
+
+Cadastro e edição de alunos.
+
+Acesso ao histórico completo de cada usuário.
+
+5.7 Dashboard Geral
+
+Indicadores globais de uso.
+
+Conteúdos mais acessados.
+
+Engajamento e evolução dos alunos.
+
+6. Arquitetura e Tecnologias
+
+A solução será desenvolvida com:
+
+Supabase
+
+Banco de dados
+
+Autenticação
+
+Bucket de arquivos (imagens e vídeos)
+
+Policies de segurança
+
+Frontend 100% mobile-first
+
+HTML minimalista
+
+CSS responsivo
+
+JavaScript puro com navegação SPA via innerHTML
+
+A aplicação funcionará como uma single-page application, com carregamento dinâmico das telas e experiência semelhante a um aplicativo nativo.
+
+7. Diferenciais da Plataforma
+
+Experiência moderna e fluida, similar a apps nativos.
+
+Ecossistema completo integrando treino, nutrição, conteúdo e rede social.
+
+Controle total para a equipe, sem depender de painéis externos.
+
+Métricas reais do comportamento do aluno.
+
+Estrutura flexível e escalável para expansões futuras.
+
+8. Público-Alvo
+
+Academias
+
+Personal trainers
+
+Estúdios de treino
+
+Alunos que desejam acompanhamento digital contínuo
+
+9. Conclusão
+
+Este projeto visa criar um ambiente digital robusto e envolvente que conecta alunos e academia em um único sistema, agregando valor diário ao usuário e fornecendo ferramentas profissionais para a equipe. A plataforma será um diferencial competitivo, reforçando a marca da academia e oferecendo uma experiência de alto nível com tecnologia leve e acessível.

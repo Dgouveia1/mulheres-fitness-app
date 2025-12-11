@@ -1,0 +1,123 @@
+🚀 Plano de Desenvolvimento - FitApp Pro
+
+Este documento descreve as etapas sequenciais para o desenvolvimento da aplicação Web (App do Usuário + Painel Admin), utilizando Supabase (Schema principal) e Frontend Vanilla JS (Single File).
+
+🟢 Fase 1: Infraestrutura e Dados (Concluído)
+
+1.1 Modelagem de Dados
+
+[x] Criação do Schema principal.
+
+[x] Definição de Tabelas (profiles, fitflix, workouts, fitgran, recipes, assessments, analytics).
+
+[x] Relacionamentos (Foreign Keys) e Constraints.
+
+1.2 Segurança e Acesso
+
+[x] Configuração de Triggers para criação automática de perfil.
+
+[x] Implementação de RLS (Row Level Security) para proteção de dados por usuário e função (admin/user).
+
+[x] Definição de Policies de acesso (Leitura pública vs. Escrita autenticada).
+
+1.3 Armazenamento (Storage)
+
+[x] Criação dos Buckets (fitflix_videos, fitgran_posts, etc.).
+
+[x] Configuração de permissões de upload e leitura de arquivos.
+
+🟡 Fase 2: Frontend Core (Próximo Passo)
+
+2.1 Configuração do Cliente Supabase
+
+[ ] Inicializar cliente Supabase no JS apontando explicitamente para o schema principal.
+
+[ ] Implementar serviço de Autenticação (Login/Logout) e gestão de Sessão.
+
+[ ] Implementar verificação de Roles (Redirecionamento Admin vs. User).
+
+2.2 Estrutura Base (Single File)
+
+[ ] Criar estrutura HTML mínima (#app-container, Navbar, Modais).
+
+[ ] Implementar CSS Reset e Variáveis Globais (Cores, Tipografia).
+
+[ ] Criar Layout Mobile-First (Menu fixo inferior, Header dinâmico).
+
+[ ] Implementar Router SPA (Navegação sem recarregar página via innerHTML).
+
+🔵 Fase 3: Funcionalidades do Usuário (App)
+
+3.1 Módulo FitFlix (Vídeos)
+
+[ ] Layout estilo Netflix (Hero banner, Sliders horizontais por categoria).
+
+[ ] Player de vídeo (Simulado ou HTML5 Video).
+
+[ ] Integração com tabela fitflix_videos.
+
+3.2 Módulo FitGran (Social)
+
+[ ] Feed de postagens (Scroll infinito ou paginação simples).
+
+[ ] Funcionalidade de Curtir (Toggle Like).
+
+[ ] Visualização de Stories (Barra superior).
+
+3.3 Módulo de Treinos
+
+[ ] Dashboard do aluno (Resumo de frequência e carga).
+
+[ ] Listagem de Treinos ativos do dia.
+
+[ ] Detalhes do exercício (Vídeo, séries, repetições).
+
+3.4 Módulo de Receitas e Perfil
+
+[ ] Galeria de receitas com filtro por categoria.
+
+[ ] Tela de Perfil com gráficos de evolução (Chart.js) e dados pessoais.
+
+🟣 Fase 4: Painel Administrativo (Gestão)
+
+4.1 Dashboard Admin
+
+[ ] Visão geral de métricas (KPIs: Usuários ativos, Receita, Acessos).
+
+[ ] Gráficos administrativos.
+
+4.2 Gestão de Conteúdo (CMS)
+
+[ ] Formulários para adicionar/editar Vídeos do FitFlix.
+
+[ ] Formulários para criar Receitas.
+
+[ ] Ferramenta para criar Planos de Treino e atribuir a alunos.
+
+4.3 Gestão de Usuários
+
+[ ] Listagem de alunos.
+
+[ ] Edição de perfis e permissões.
+
+🟠 Fase 5: Refinamento e Entrega
+
+5.1 Analytics e Auditoria
+
+[ ] Implementar tracking de cliques no Frontend.
+
+[ ] Verificar logs na tabela analytics_usage.
+
+5.2 Testes e Polimento
+
+[ ] Testes de fluxo de usuário (Onboarding até uso diário).
+
+[ ] Testes de segurança (Tentar acessar dados de admin como user).
+
+[ ] Otimização de UI/UX (Feedback visual, Loaders, Tratamento de erros).
+
+5.3 Deploy
+
+[ ] Finalizar arquivo único index.html.
+
+[ ] Instruções de hospedagem (Vercel, Netlify ou Supabase Storage).
