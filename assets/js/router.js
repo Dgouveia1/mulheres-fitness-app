@@ -1,4 +1,4 @@
-// assets/js/router.js - Gerenciamento de Rotas e Navegação Animada
+// assets/js/router.js - Atualizado para Hash Routing (compatível com GitHub Pages)
 import { auth } from './auth.js';
 import { Pages, PageHandlers } from './pages.js';
 import { Layout } from './layout.js';
@@ -18,7 +18,8 @@ export const router = {
     },
 
     async init() {
-        window.addEventListener('popstate', () => this.handleRoute(window.location.pathname));
+        // Ouve mudanças na #hash da URL
+        window.addEventListener('hashchange', () => this.handleRoute());
 
         document.body.addEventListener('click', e => {
             const link = e.target.closest('[data-link]');
@@ -26,12 +27,12 @@ export const router = {
                 e.preventDefault();
                 const href = link.getAttribute('href');
                 
-                // --- LÓGICA DO BOTÃO CENTRAL DINÂMICO ---
-                // Se já estamos no FitGran e clicamos no link do FitGran de novo (botão central)
-                if (href === '/fitgran' && window.location.pathname === '/fitgran') {
-                    // Dispara evento para abrir a câmera (ouvido no pages.js)
+                // LÓGICA DO BOTÃO CENTRAL DINÂMICO
+                // Compara o hash atual com o destino
+                const currentHash = this.getHash();
+                if (href === '/fitgran' && currentHash === '/fitgran') {
                     window.dispatchEvent(new CustomEvent('fitgran-open-camera'));
-                    return; // Não navega, apenas executa a ação
+                    return; 
                 }
 
                 this.navigate(href);
@@ -39,19 +40,27 @@ export const router = {
         });
 
         this.attachGlobalListeners();
-        await this.handleRoute(window.location.pathname);
+        // Carrega a rota inicial baseada no Hash atual
+        await this.handleRoute();
         
-        setTimeout(() => this.updateNavIndicator(window.location.pathname), 100);
+        // Atualiza indicador visual
+        setTimeout(() => this.updateNavIndicator(this.getHash()), 100);
+    },
+
+    // Função auxiliar para pegar o caminho limpo da hash (ex: #/login -> /login)
+    getHash() {
+        return window.location.hash.slice(1) || '/';
     },
 
     navigate(path) {
-        window.history.pushState({}, '', path);
-        const cleanPath = path.split('?')[0];
-        this.handleRoute(cleanPath);
+        // Muda o hash, o que dispara o evento 'hashchange' automaticamente
+        window.location.hash = path;
     },
 
-    async handleRoute(path) {
-        const cleanPath = window.location.pathname;
+    async handleRoute() {
+        const path = this.getHash();
+        // Remove query params para encontrar a rota
+        const cleanPath = path.split('?')[0]; 
         let route = this.routes[cleanPath] || this.routes['/'];
 
         const { data } = await auth.getSession();
@@ -68,13 +77,11 @@ export const router = {
         }
 
         const isMainLayout = !route.layout;
-
         const app = document.getElementById('app');
         const existingNav = document.querySelector('.bottom-nav');
         
         if (existingNav && isMainLayout) {
             const contentContainer = document.querySelector('.main-content-scroll');
-            
             if (contentContainer) {
                 contentContainer.innerHTML = route.component(user);
                 window.scrollTo(0, 0);
@@ -85,7 +92,6 @@ export const router = {
                 app.innerHTML = Layout.Main(contentHTML, cleanPath);
                 setTimeout(() => this.updateNavIndicator(cleanPath), 50);
             }
-        
         } else {
             const contentHTML = route.component(user);
             if (route.layout === 'auth') {
@@ -114,16 +120,14 @@ export const router = {
         navItems.forEach(item => {
             const href = item.getAttribute('href');
             
-            // --- TRANSFORMAÇÃO DO ÍCONE FITGRAN ---
+            // TRANSFORMAÇÃO DO ÍCONE FITGRAN
             if (href === '/fitgran') {
                 const iconSpan = item.querySelector('span');
                 if (path === '/fitgran') {
-                    // Se estamos no FitGran, vira botão de ADICIONAR (+)
                     iconSpan.innerText = '➕'; 
-                    iconSpan.style.filter = 'brightness(2)'; // Destaca mais
+                    iconSpan.style.filter = 'brightness(2)';
                     iconSpan.style.transform = 'scale(1.2)';
                 } else {
-                    // Se estamos fora, volta a ser CÂMERA/LOGO 📸
                     iconSpan.innerText = '📸';
                     iconSpan.style.filter = '';
                     iconSpan.style.transform = '';
@@ -143,7 +147,13 @@ export const router = {
     },
 
     attachGlobalListeners() {
-        document.getElementById('app').addEventListener('submit', async (e) => {
+        // Previne múltiplos listeners se o init rodar de novo (opcional, mas boa prática)
+        const app = document.getElementById('app');
+        // Remove listener antigo clonando o elemento (hack rápido para limpar event listeners anônimos)
+        // Mas como nosso app é simples, vamos apenas adicionar uma flag ou manter simples
+        
+        // Listener de formulários
+        app.addEventListener('submit', async (e) => {
             if (e.target.id === 'login-form') {
                 e.preventDefault();
                 const email = e.target.email.value;
