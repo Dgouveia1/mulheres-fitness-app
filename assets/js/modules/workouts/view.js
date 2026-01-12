@@ -219,8 +219,98 @@ export const AdminWorkoutView = {
                 </div>
             </div>
         </div>
-    `,
+    `
+};
 
-    // Mantendo a parte do StudentWorkoutView inalterada, pois focamos no Admin agora
-    StudentWorkoutView: {} 
+// =======================================================
+// VISUALIZAÇÃO DA ALUNA (Exportada separadamente agora)
+// =======================================================
+export const StudentWorkoutView = {
+    List: (workouts) => {
+        if (!workouts || workouts.length === 0) {
+            return `
+                <div class="page-content" style="text-align:center; padding-top:60px;">
+                    <span class="material-icons" style="font-size:4rem; color:#e5e7eb; margin-bottom:16px;">fitness_center</span>
+                    <h3 style="color:#666;">Sem treinos ainda</h3>
+                    <p style="color:#999; margin-top:8px;">Aguarde sua treinadora montar sua ficha personalizada.</p>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="page-content">
+                <h2 class="section-title">Meus Treinos</h2>
+                <div class="workouts-list-student">
+                    ${workouts.map(w => `
+                        <div class="workout-card-student" onclick="StudentWorkoutHandler.openSession(${w.id})">
+                            <div class="wc-info">
+                                <h3>${w.title}</h3>
+                                <p>${w.description || 'Sem descrição'}</p>
+                                <div class="wc-meta">
+                                    <span class="badge">${w.items ? w.items.length : 0} exercícios</span>
+                                    <span class="badge">${w.difficulty_level || 'Geral'}</span>
+                                </div>
+                            </div>
+                            <div class="wc-action">
+                                <span class="material-icons">play_circle</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <!-- MODAL DE SESSÃO DE TREINO (PLAYER) -->
+                <div id="workout-modal" class="modal-fullscreen">
+                    <div class="timer-overlay">
+                        <div class="timer-circle">
+                            <span id="timer-countdown">60</span>
+                        </div>
+                        <p style="color:white; font-weight:600; margin-top:20px;">Descanso</p>
+                        <button id="skip-timer-btn" class="btn-secondary" style="background:white; margin-top:20px; color:var(--primary-color);">Pular Descanso</button>
+                    </div>
+
+                    <div class="session-header">
+                        <button class="btn-icon-sm" onclick="document.getElementById('workout-modal').classList.remove('active')">
+                            <span class="material-icons" style="color:white;">close</span>
+                        </button>
+                        <h3 id="modal-ex-name" style="color:white;">Nome do Exercício</h3>
+                        <span style="width:32px;"></span> 
+                    </div>
+
+                    <div class="session-body">
+                        <div id="modal-media" class="session-media">
+                            <!-- Video ou Imagem aqui -->
+                        </div>
+                        
+                        <div class="session-controls">
+                            <div class="session-info-bar">
+                                <span id="modal-ex-muscle" class="badge-outline">Músculo</span>
+                                <span id="modal-meta-info" class="meta-text">3 x 12</span>
+                            </div>
+
+                            <div class="set-tracker" id="modal-dots">
+                                <!-- Dots injetados via JS -->
+                            </div>
+
+                            <h2 id="modal-set-text" style="text-align:center; margin:15px 0; color:var(--primary-color);">Série 1</h2>
+                            
+                            <div class="input-grid">
+                                <div class="input-group">
+                                    <label>Carga (kg)</label>
+                                    <input type="number" id="input-load" value="0">
+                                </div>
+                                <div class="input-group">
+                                    <label>Repetições</label>
+                                    <input type="number" id="input-reps" value="12">
+                                </div>
+                            </div>
+
+                            <button id="modal-action-btn" class="btn-primary btn-lg" style="margin-top:20px; width:100%; padding:16px; font-size:1.1rem; border-radius:30px;">
+                                Concluir Série
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 };
