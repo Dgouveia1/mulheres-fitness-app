@@ -1,3 +1,19 @@
-@import url('./global.css');
-@import url('./auth.css');
-@import url('./app.css');
+@import url('./core/global.css');
+
+/* Layouts */
+@import url('./layouts/main.css');
+/* New file to be created from app.css */
+
+/* Modules */
+@import url('./modules/auth.css');
+@import url('./modules/dashboard.css');
+/* New file to be created from app.css */
+@import url('./modules/workouts.css');
+/* New file to be created from app.css */
+@import url('./modules/fitflix.css');
+/* New file to be created from app.css */
+@import url('./modules/fitgran.css');
+/* New file to be created from app.css */
+@import url('./modules/profile.css');
+/* New file to be created from app.css */
+@import url('./modules/admin.css');

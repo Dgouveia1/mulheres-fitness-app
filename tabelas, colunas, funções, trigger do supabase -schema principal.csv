@@ -1,188 +1,225 @@
 categoria,objeto,detalhes
-1. TABELAS E COLUNAS,TABELA: analytics_usage,COLUNA: route | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: analytics_usage,COLUNA: metadata | TIPO: jsonb | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: analytics_usage,COLUNA: element_id | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: analytics_usage,COLUNA: action_type | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: analytics_usage,COLUNA: user_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: analytics_usage,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: analytics_usage,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: arms_cm | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: legs_cm | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: diet_plan_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: notes | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: body_fat_pct | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: chest_cm | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: waist_cm | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: weight_kg | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: coach_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: assessments,COLUNA: user_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: exercises,COLUNA: muscle_group | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: date | TIPO: date | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: telefone | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: unit | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: status | TIPO: text | NULÁVEL: YES | PADRÃO: 'pending'::text | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: type | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: client_name | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: time | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: professional | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: duration | TIPO: time without time zone | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: appointments,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: appointments,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: audit_logs,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: audit_logs,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: audit_logs,COLUNA: user_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: audit_logs,COLUNA: user_email | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: audit_logs,COLUNA: details | TIPO: jsonb | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: audit_logs,COLUNA: action | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: blocked_days,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: blocked_days,COLUNA: date | TIPO: date | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: blocked_days,COLUNA: reason | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: blocked_days,COLUNA: id | TIPO: uuid | NULÁVEL: NO | PADRÃO: gen_random_uuid() | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: blocked_days,COLUNA: type | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: clients,COLUNA: last_visit | TIPO: date | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: clients,COLUNA: email | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: clients,COLUNA: phone | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: clients,COLUNA: name | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: clients,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: clients,COLUNA: id | TIPO: uuid | NULÁVEL: NO | PADRÃO: gen_random_uuid() | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: exercises,COLUNA: image_url | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: exercises,COLUNA: name | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: exercises,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: exercises,COLUNA: description | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: exercises,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: exercises,COLUNA: name | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: exercises,COLUNA: muscle_group | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: exercises,COLUNA: video_url | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_categories,COLUNA: slug | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_categories,COLUNA: name | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_categories,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_history,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_history,COLUNA: user_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_history,COLUNA: video_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_history,"COLUNA: watched_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
-1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: is_coming_soon | TIPO: boolean | NULÁVEL: YES | PADRÃO: false | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: is_featured | TIPO: boolean | NULÁVEL: YES | PADRÃO: false | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: category_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: duration_minutes | TIPO: integer | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: views_count | TIPO: integer | NULÁVEL: YES | PADRÃO: 0 | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_videos,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
 1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: description | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: video_url | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: duration_minutes | TIPO: integer | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitflix_videos,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: category | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: thumbnail_url | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: video_url | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: fitflix_videos,COLUNA: title | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitgran_comments,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitgran_comments,COLUNA: user_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: fitgran_comments,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: fitgran_comments,COLUNA: post_id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: fitgran_comments,COLUNA: content | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitgran_comments,COLUNA: post_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitgran_comments,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitgran_comments,COLUNA: user_id | TIPO: uuid | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitgran_likes,COLUNA: post_id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: fitgran_likes,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitgran_likes,COLUNA: user_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitgran_likes,COLUNA: post_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitgran_likes,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: fitgran_likes,COLUNA: user_id | TIPO: uuid | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: fitgran_posts,COLUNA: likes_count | TIPO: integer | NULÁVEL: YES | PADRÃO: 0 | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitgran_posts,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: fitgran_posts,COLUNA: user_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: fitgran_posts,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
-1. TABELAS E COLUNAS,TABELA: fitgran_posts,COLUNA: image_url | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: fitgran_posts,COLUNA: caption | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: role | TIPO: text | NULÁVEL: YES | PADRÃO: 'user'::text | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: email | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitgran_posts,COLUNA: image_url | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitgran_posts,COLUNA: user_id | TIPO: uuid | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: fitgran_posts,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: messages,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: messages,COLUNA: content | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: messages,COLUNA: sender_name | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: messages,COLUNA: sender_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: messages,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: messages,COLUNA: recipient_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: role | TIPO: text | NULÁVEL: YES | PADRÃO: 'operacional_user'::text | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: unit | TIPO: text | NULÁVEL: YES | PADRÃO: 'Central'::text | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: full_name | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: profiles,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
 1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: id | TIPO: uuid | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: weight_kg | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: height_cm | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: full_name | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: avatar_url | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: bio | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: goal | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: fat_g | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: category | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: diet_type | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: title | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: protein_g | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: calories | TIPO: integer | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: carbs_g | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: preparation_method | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: image_url | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: recipes,COLUNA: ingredients | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: order_index | TIPO: integer | NULÁVEL: YES | PADRÃO: 0 | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: suggested_load_kg | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: workout_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: profiles,COLUNA: email | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: reps | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: exercise_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: rest_seconds | TIPO: integer | NULÁVEL: YES | PADRÃO: 60 | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: suggested_load_kg | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: order_index | TIPO: integer | NULÁVEL: YES | PADRÃO: 0 | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: sets | TIPO: integer | NULÁVEL: YES | PADRÃO: 3 | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: workout_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_items,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
+1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: exercise_id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: workout_id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: reps | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_items,COLUNA: rest_seconds | TIPO: integer | NULÁVEL: YES | PADRÃO: 60 | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: user_id | TIPO: uuid | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: reps_performed | TIPO: integer | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: exercise_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: user_id | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: load_kg | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: workout_logs,"COLUNA: performed_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
-1. TABELAS E COLUNAS,TABELA: workouts,COLUNA: difficulty_level | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: load_kg | TIPO: double precision | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: exercise_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: workout_id | TIPO: bigint | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workout_logs,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: workouts,COLUNA: title | TIPO: text | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: workouts,COLUNA: id | TIPO: bigint | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
+1. TABELAS E COLUNAS,TABELA: workouts,COLUNA: assigned_to | TIPO: uuid | NULÁVEL: NO | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: workouts,COLUNA: created_by | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-1. TABELAS E COLUNAS,TABELA: workouts,COLUNA: assigned_to | TIPO: uuid | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
 1. TABELAS E COLUNAS,TABELA: workouts,"COLUNA: created_at | TIPO: timestamp with time zone | NULÁVEL: YES | PADRÃO: timezone('utc'::text, now()) | DESCRIÇÃO: N/A"
 1. TABELAS E COLUNAS,TABELA: workouts,COLUNA: description | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
-2. CONSTRAINTS (CHAVES),TABELA: analytics_usage,CONSTRAINT: analytics_usage_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
-2. CONSTRAINTS (CHAVES),TABELA: analytics_usage,CONSTRAINT: analytics_usage_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
-2. CONSTRAINTS (CHAVES),TABELA: assessments,CONSTRAINT: assessments_coach_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): coach_id | REFERENCIA: profiles(id)
-2. CONSTRAINTS (CHAVES),TABELA: assessments,CONSTRAINT: assessments_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
-2. CONSTRAINTS (CHAVES),TABELA: assessments,CONSTRAINT: assessments_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
+1. TABELAS E COLUNAS,TABELA: workouts,COLUNA: difficulty_level | TIPO: text | NULÁVEL: YES | PADRÃO: N/A | DESCRIÇÃO: N/A
+2. CONSTRAINTS (CHAVES),TABELA: appointments,CONSTRAINT: appointments_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
+2. CONSTRAINTS (CHAVES),TABELA: audit_logs,null
+2. CONSTRAINTS (CHAVES),TABELA: audit_logs,CONSTRAINT: audit_logs_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
+2. CONSTRAINTS (CHAVES),TABELA: blocked_days,CONSTRAINT: blocked_days_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
+2. CONSTRAINTS (CHAVES),TABELA: clients,CONSTRAINT: clients_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
 2. CONSTRAINTS (CHAVES),TABELA: exercises,CONSTRAINT: exercises_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
-2. CONSTRAINTS (CHAVES),TABELA: fitflix_categories,CONSTRAINT: fitflix_categories_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
-2. CONSTRAINTS (CHAVES),TABELA: fitflix_categories,CONSTRAINT: fitflix_categories_slug_key | TIPO: UNIQUE | COLUNA(S): slug
-2. CONSTRAINTS (CHAVES),TABELA: fitflix_history,CONSTRAINT: fitflix_history_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
-2. CONSTRAINTS (CHAVES),TABELA: fitflix_history,CONSTRAINT: fitflix_history_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
-2. CONSTRAINTS (CHAVES),TABELA: fitflix_history,CONSTRAINT: fitflix_history_video_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): video_id | REFERENCIA: fitflix_videos(id)
 2. CONSTRAINTS (CHAVES),TABELA: fitflix_videos,CONSTRAINT: fitflix_videos_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
-2. CONSTRAINTS (CHAVES),TABELA: fitflix_videos,CONSTRAINT: fitflix_videos_category_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): category_id | REFERENCIA: fitflix_categories(id)
-2. CONSTRAINTS (CHAVES),TABELA: fitgran_comments,CONSTRAINT: fitgran_comments_post_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): post_id | REFERENCIA: fitgran_posts(id)
 2. CONSTRAINTS (CHAVES),TABELA: fitgran_comments,CONSTRAINT: fitgran_comments_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
+2. CONSTRAINTS (CHAVES),TABELA: fitgran_comments,CONSTRAINT: fitgran_comments_post_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): post_id | REFERENCIA: fitgran_posts(id)
 2. CONSTRAINTS (CHAVES),TABELA: fitgran_comments,CONSTRAINT: fitgran_comments_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
-2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_post_id_user_id_key | TIPO: UNIQUE | COLUNA(S): user_id
-2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
-2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_post_id_user_id_key | TIPO: UNIQUE | COLUNA(S): user_id
+2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_post_id_user_id_key | TIPO: UNIQUE | COLUNA(S): post_id
 2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
 2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_post_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): post_id | REFERENCIA: fitgran_posts(id)
 2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_post_id_user_id_key | TIPO: UNIQUE | COLUNA(S): post_id
-2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_post_id_user_id_key | TIPO: UNIQUE | COLUNA(S): post_id
-2. CONSTRAINTS (CHAVES),TABELA: fitgran_posts,CONSTRAINT: fitgran_posts_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
+2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_post_id_user_id_key | TIPO: UNIQUE | COLUNA(S): user_id
+2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_post_id_user_id_key | TIPO: UNIQUE | COLUNA(S): user_id
+2. CONSTRAINTS (CHAVES),TABELA: fitgran_likes,CONSTRAINT: fitgran_likes_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
 2. CONSTRAINTS (CHAVES),TABELA: fitgran_posts,CONSTRAINT: fitgran_posts_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
+2. CONSTRAINTS (CHAVES),TABELA: fitgran_posts,CONSTRAINT: fitgran_posts_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
+2. CONSTRAINTS (CHAVES),TABELA: messages,null
+2. CONSTRAINTS (CHAVES),TABELA: messages,null
+2. CONSTRAINTS (CHAVES),TABELA: messages,CONSTRAINT: messages_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
 2. CONSTRAINTS (CHAVES),TABELA: profiles,null
 2. CONSTRAINTS (CHAVES),TABELA: profiles,CONSTRAINT: profiles_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
-2. CONSTRAINTS (CHAVES),TABELA: recipes,CONSTRAINT: recipes_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
 2. CONSTRAINTS (CHAVES),TABELA: workout_items,CONSTRAINT: workout_items_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
 2. CONSTRAINTS (CHAVES),TABELA: workout_items,CONSTRAINT: workout_items_workout_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): workout_id | REFERENCIA: workouts(id)
 2. CONSTRAINTS (CHAVES),TABELA: workout_items,CONSTRAINT: workout_items_exercise_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): exercise_id | REFERENCIA: exercises(id)
-2. CONSTRAINTS (CHAVES),TABELA: workout_logs,CONSTRAINT: workout_logs_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
 2. CONSTRAINTS (CHAVES),TABELA: workout_logs,CONSTRAINT: workout_logs_workout_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): workout_id | REFERENCIA: workouts(id)
-2. CONSTRAINTS (CHAVES),TABELA: workout_logs,CONSTRAINT: workout_logs_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
 2. CONSTRAINTS (CHAVES),TABELA: workout_logs,CONSTRAINT: workout_logs_exercise_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): exercise_id | REFERENCIA: exercises(id)
+2. CONSTRAINTS (CHAVES),TABELA: workout_logs,CONSTRAINT: workout_logs_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
+2. CONSTRAINTS (CHAVES),TABELA: workout_logs,CONSTRAINT: workout_logs_user_id_fkey | TIPO: FOREIGN KEY | COLUNA(S): user_id | REFERENCIA: profiles(id)
 2. CONSTRAINTS (CHAVES),TABELA: workouts,CONSTRAINT: workouts_pkey | TIPO: PRIMARY KEY | COLUNA(S): id
 2. CONSTRAINTS (CHAVES),TABELA: workouts,CONSTRAINT: workouts_created_by_fkey | TIPO: FOREIGN KEY | COLUNA(S): created_by | REFERENCIA: profiles(id)
 2. CONSTRAINTS (CHAVES),TABELA: workouts,CONSTRAINT: workouts_assigned_to_fkey | TIPO: FOREIGN KEY | COLUNA(S): assigned_to | REFERENCIA: profiles(id)
-3. ÍNDICES,TABELA: analytics_usage,ÍNDICE: analytics_usage_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX analytics_usage_pkey ON principal.analytics_usage USING btree (id)
-3. ÍNDICES,TABELA: assessments,ÍNDICE: assessments_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX assessments_pkey ON principal.assessments USING btree (id)
-3. ÍNDICES,TABELA: exercises,ÍNDICE: exercises_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX exercises_pkey ON principal.exercises USING btree (id)
-3. ÍNDICES,TABELA: fitflix_categories,ÍNDICE: fitflix_categories_slug_key | DEFINIÇÃO: CREATE UNIQUE INDEX fitflix_categories_slug_key ON principal.fitflix_categories USING btree (slug)
-3. ÍNDICES,TABELA: fitflix_categories,ÍNDICE: fitflix_categories_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitflix_categories_pkey ON principal.fitflix_categories USING btree (id)
-3. ÍNDICES,TABELA: fitflix_history,ÍNDICE: fitflix_history_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitflix_history_pkey ON principal.fitflix_history USING btree (id)
-3. ÍNDICES,TABELA: fitflix_videos,ÍNDICE: fitflix_videos_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitflix_videos_pkey ON principal.fitflix_videos USING btree (id)
-3. ÍNDICES,TABELA: fitgran_comments,ÍNDICE: fitgran_comments_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitgran_comments_pkey ON principal.fitgran_comments USING btree (id)
-3. ÍNDICES,TABELA: fitgran_likes,ÍNDICE: fitgran_likes_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitgran_likes_pkey ON principal.fitgran_likes USING btree (id)
-3. ÍNDICES,TABELA: fitgran_likes,"ÍNDICE: fitgran_likes_post_id_user_id_key | DEFINIÇÃO: CREATE UNIQUE INDEX fitgran_likes_post_id_user_id_key ON principal.fitgran_likes USING btree (post_id, user_id)"
-3. ÍNDICES,TABELA: fitgran_posts,ÍNDICE: fitgran_posts_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitgran_posts_pkey ON principal.fitgran_posts USING btree (id)
-3. ÍNDICES,TABELA: profiles,ÍNDICE: profiles_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX profiles_pkey ON principal.profiles USING btree (id)
-3. ÍNDICES,TABELA: recipes,ÍNDICE: recipes_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX recipes_pkey ON principal.recipes USING btree (id)
-3. ÍNDICES,TABELA: workout_items,ÍNDICE: workout_items_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX workout_items_pkey ON principal.workout_items USING btree (id)
-3. ÍNDICES,TABELA: workout_logs,ÍNDICE: workout_logs_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX workout_logs_pkey ON principal.workout_logs USING btree (id)
-3. ÍNDICES,TABELA: workouts,ÍNDICE: workouts_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX workouts_pkey ON principal.workouts USING btree (id)
-4. FUNÇÕES (RPC),FUNÇÃO: handle_new_user,"CREATE OR REPLACE FUNCTION principal.handle_new_user()
+3. ÍNDICES,TABELA: appointments,ÍNDICE: appointments_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX appointments_pkey ON public.appointments USING btree (id)
+3. ÍNDICES,TABELA: audit_logs,ÍNDICE: audit_logs_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX audit_logs_pkey ON public.audit_logs USING btree (id)
+3. ÍNDICES,TABELA: blocked_days,ÍNDICE: blocked_days_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX blocked_days_pkey ON public.blocked_days USING btree (id)
+3. ÍNDICES,TABELA: blocked_days,ÍNDICE: idx_blocked_days_date | DEFINIÇÃO: CREATE INDEX idx_blocked_days_date ON public.blocked_days USING btree (date)
+3. ÍNDICES,TABELA: clients,ÍNDICE: clients_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX clients_pkey ON public.clients USING btree (id)
+3. ÍNDICES,TABELA: exercises,ÍNDICE: exercises_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX exercises_pkey ON public.exercises USING btree (id)
+3. ÍNDICES,TABELA: fitflix_videos,ÍNDICE: fitflix_videos_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitflix_videos_pkey ON public.fitflix_videos USING btree (id)
+3. ÍNDICES,TABELA: fitgran_comments,ÍNDICE: fitgran_comments_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitgran_comments_pkey ON public.fitgran_comments USING btree (id)
+3. ÍNDICES,TABELA: fitgran_likes,"ÍNDICE: fitgran_likes_post_id_user_id_key | DEFINIÇÃO: CREATE UNIQUE INDEX fitgran_likes_post_id_user_id_key ON public.fitgran_likes USING btree (post_id, user_id)"
+3. ÍNDICES,TABELA: fitgran_likes,ÍNDICE: fitgran_likes_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitgran_likes_pkey ON public.fitgran_likes USING btree (id)
+3. ÍNDICES,TABELA: fitgran_posts,ÍNDICE: fitgran_posts_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX fitgran_posts_pkey ON public.fitgran_posts USING btree (id)
+3. ÍNDICES,TABELA: messages,ÍNDICE: messages_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX messages_pkey ON public.messages USING btree (id)
+3. ÍNDICES,TABELA: messages,ÍNDICE: idx_messages_recipient | DEFINIÇÃO: CREATE INDEX idx_messages_recipient ON public.messages USING btree (recipient_id)
+3. ÍNDICES,TABELA: profiles,ÍNDICE: profiles_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id)
+3. ÍNDICES,TABELA: workout_items,ÍNDICE: workout_items_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX workout_items_pkey ON public.workout_items USING btree (id)
+3. ÍNDICES,TABELA: workout_logs,ÍNDICE: workout_logs_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX workout_logs_pkey ON public.workout_logs USING btree (id)
+3. ÍNDICES,TABELA: workouts,ÍNDICE: workouts_pkey | DEFINIÇÃO: CREATE UNIQUE INDEX workouts_pkey ON public.workouts USING btree (id)
+4. FUNÇÕES (RPC),FUNÇÃO: handle_new_user,"CREATE OR REPLACE FUNCTION public.handle_new_user()
  RETURNS trigger
  LANGUAGE plpgsql
  SECURITY DEFINER
 AS $function$
-begin
-  insert into principal.profiles (id, email, full_name, role)
-  values (new.id, new.email, new.raw_user_meta_data->>'full_name', 'user');
-  return new;
-end;
+BEGIN
+  -- Garante o uso de full_name (a coluna agora existe devido à migration acima)
+  INSERT INTO public.profiles (id, email, full_name, role)
+  VALUES (new.id, new.email, new.raw_user_meta_data->>'full_name', COALESCE(new.raw_user_meta_data->>'role', 'user'));
+  RETURN new;
+END;
 $function$
 "
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: analytics_usage,POLÍTICA: Analytics Insert | COMANDO: INSERT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): N/A | VERIFICANDO (WITH CHECK): (auth.uid() = user_id)
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitflix_videos,"POLÍTICA: FitFlix Admin All | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (EXISTS ( SELECT 1
-   FROM principal.profiles
-  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text)))) | VERIFICANDO (WITH CHECK): N/A"
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitflix_videos,POLÍTICA: FitFlix Public Read | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitgran_comments,POLÍTICA: Comments Insert Own | COMANDO: INSERT | PERMISSÃO: PERMISSIVE | PARA: authenticated | USANDO (USING): N/A | VERIFICANDO (WITH CHECK): (auth.uid() = user_id)
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitgran_comments,POLÍTICA: Comments View All | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitgran_posts,"POLÍTICA: FitGran Delete Own/Admin | COMANDO: DELETE | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): ((auth.uid() = user_id) OR (EXISTS ( SELECT 1
-   FROM principal.profiles
-  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))) | VERIFICANDO (WITH CHECK): N/A"
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitgran_posts,POLÍTICA: FitGran Read All | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitgran_posts,POLÍTICA: FitGran Insert Own | COMANDO: INSERT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): N/A | VERIFICANDO (WITH CHECK): (auth.uid() = user_id)
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: profiles,POLÍTICA: Profiles Update Own | COMANDO: UPDATE | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() = id) | VERIFICANDO (WITH CHECK): N/A
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: profiles,POLÍTICA: Profiles View All | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: workouts,"POLÍTICA: Workouts Read | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): ((assigned_to = auth.uid()) OR (assigned_to IS NULL) OR (EXISTS ( SELECT 1
-   FROM principal.profiles
-  WHERE ((profiles.id = auth.uid()) AND (profiles.role = ANY (ARRAY['admin'::text, 'coach'::text])))))) | VERIFICANDO (WITH CHECK): N/A"
-6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: workouts,"POLÍTICA: Workouts Admin Manage | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (EXISTS ( SELECT 1
-   FROM principal.profiles
-  WHERE ((profiles.id = auth.uid()) AND (profiles.role = ANY (ARRAY['admin'::text, 'coach'::text]))))) | VERIFICANDO (WITH CHECK): N/A"
+4. FUNÇÕES (RPC),FUNÇÃO: update_fitgran_likes,"CREATE OR REPLACE FUNCTION public.update_fitgran_likes()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+BEGIN
+  IF (TG_OP = 'INSERT') THEN
+    UPDATE public.fitgran_posts SET likes_count = likes_count + 1 WHERE id = NEW.post_id;
+    RETURN NEW;
+  ELSIF (TG_OP = 'DELETE') THEN
+    UPDATE public.fitgran_posts SET likes_count = GREATEST(0, likes_count - 1) WHERE id = OLD.post_id;
+    RETURN OLD;
+  END IF;
+  RETURN NULL;
+END;
+$function$
+"
+5. GATILHOS (TRIGGERS),TABELA: fitgran_likes,GATILHO: on_like_change | EVENTO: INSERT | QUANDO: AFTER | EXECUTA: EXECUTE FUNCTION update_fitgran_likes()
+5. GATILHOS (TRIGGERS),TABELA: fitgran_likes,GATILHO: on_like_change | EVENTO: DELETE | QUANDO: AFTER | EXECUTA: EXECUTE FUNCTION update_fitgran_likes()
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: appointments,POLÍTICA: Public Appointments Access | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: appointments,"POLÍTICA: Usuário vê seus agendamentos | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (client_name = ( SELECT profiles.full_name
+   FROM profiles
+  WHERE (profiles.id = auth.uid()))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: appointments,"POLÍTICA: Staff vê agenda | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() IN ( SELECT profiles.id
+   FROM profiles
+  WHERE (profiles.role = ANY (ARRAY['admin'::text, 'reception'::text, 'coach'::text, 'nutri'::text])))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: appointments,POLÍTICA: Enable access for authenticated users | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.role() = 'authenticated'::text) | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: audit_logs,POLÍTICA: Insert logs | COMANDO: INSERT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): N/A | VERIFICANDO (WITH CHECK): (auth.role() = 'authenticated'::text)
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: audit_logs,"POLÍTICA: Admin view logs | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (EXISTS ( SELECT 1
+   FROM profiles
+  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin_user'::text)))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: blocked_days,POLÍTICA: View blocked days | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: authenticated | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: blocked_days,"POLÍTICA: Manage blocked days | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: authenticated | USANDO (USING): (EXISTS ( SELECT 1
+   FROM profiles
+  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin_user'::text)))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: clients,POLÍTICA: Public Clients Access | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: exercises,POLÍTICA: Todos podem ver exercícios | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: exercises,"POLÍTICA: Apenas admin cria exercícios | COMANDO: INSERT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): N/A | VERIFICANDO (WITH CHECK): (auth.uid() IN ( SELECT profiles.id
+   FROM profiles
+  WHERE (profiles.role = ANY (ARRAY['admin'::text, 'coach'::text]))))"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitflix_videos,POLÍTICA: Todos veem vídeos | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.role() = 'authenticated'::text) | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitflix_videos,"POLÍTICA: Admin gerencia vídeos | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() IN ( SELECT profiles.id
+   FROM profiles
+  WHERE (profiles.role = 'admin'::text))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitgran_posts,"POLÍTICA: Dono ou Admin apaga post | COMANDO: DELETE | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): ((auth.uid() = user_id) OR (auth.uid() IN ( SELECT profiles.id
+   FROM profiles
+  WHERE (profiles.role = 'admin'::text)))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitgran_posts,POLÍTICA: Usuário cria posts | COMANDO: INSERT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): N/A | VERIFICANDO (WITH CHECK): (auth.uid() = user_id)
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: fitgran_posts,POLÍTICA: Feed visível para logados | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.role() = 'authenticated'::text) | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: messages,POLÍTICA: Chat access | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: authenticated | USANDO (USING): ((recipient_id IS NULL) OR (sender_id = auth.uid()) OR (recipient_id = auth.uid())) | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: profiles,POLÍTICA: Profiles são públicos para leitura | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: profiles,POLÍTICA: Public profiles | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): true | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: profiles,POLÍTICA: Self update | COMANDO: UPDATE | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() = id) | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: profiles,POLÍTICA: Usuário edita próprio perfil | COMANDO: UPDATE | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() = id) | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: workout_items,"POLÍTICA: Staff gere itens | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() IN ( SELECT profiles.id
+   FROM profiles
+  WHERE (profiles.role = ANY (ARRAY['admin'::text, 'coach'::text])))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: workout_items,"POLÍTICA: Ver itens do meu treino | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (EXISTS ( SELECT 1
+   FROM workouts w
+  WHERE ((w.id = workout_items.workout_id) AND (w.assigned_to = auth.uid())))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: workouts,"POLÍTICA: Staff gerencia treinos | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() IN ( SELECT profiles.id
+   FROM profiles
+  WHERE (profiles.role = ANY (ARRAY['admin'::text, 'coach'::text])))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: workouts,"POLÍTICA: Staff vê e cria todos treinos | COMANDO: ALL | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() IN ( SELECT profiles.id
+   FROM profiles
+  WHERE (profiles.role = ANY (ARRAY['admin'::text, 'coach'::text])))) | VERIFICANDO (WITH CHECK): N/A"
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: workouts,POLÍTICA: Ver meus treinos | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() = assigned_to) | VERIFICANDO (WITH CHECK): N/A
+6. POLÍTICAS DE SEGURANÇA (RLS),TABELA: workouts,POLÍTICA: Aluno vê seus treinos | COMANDO: SELECT | PERMISSÃO: PERMISSIVE | PARA: public | USANDO (USING): (auth.uid() = assigned_to) | VERIFICANDO (WITH CHECK): N/A

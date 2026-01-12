@@ -15,7 +15,7 @@ const supabaseProvider = window.supabase;
 
 if (supabaseProvider && supabaseProvider.createClient) {
     const { createClient } = supabaseProvider;
-    
+
     // Verificação de segurança para avisar se as chaves ainda não foram trocadas
     if (SUPABASE_URL.includes('SEU_ID_DO_PROJETO') || SUPABASE_ANON_KEY.includes('SUA_CHAVE_ANON')) {
         console.error('🔴 ERRO DE CONFIGURAÇÃO: Você precisa atualizar o arquivo assets/js/supabase.js com suas credenciais reais do Supabase.');
@@ -23,7 +23,7 @@ if (supabaseProvider && supabaseProvider.createClient) {
     } else {
         supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
             db: {
-                schema: 'principal'
+                schema: 'public'
             },
             auth: {
                 // Importante para manter a sessão entre recarregamentos

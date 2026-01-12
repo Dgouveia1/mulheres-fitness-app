@@ -1,0 +1,199 @@
+/* --- DASHBOARD MODULE --- */
+
+/* --- CARROSSEL DE BANNERS --- */
+.banner-carousel {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0 var(--spacing-md) 10px var(--spacing-md);
+    margin: 0 calc(-1 * var(--spacing-md)) 10px calc(-1 * var(--spacing-md));
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.banner-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.banner-item {
+    min-width: 88%;
+    height: 160px;
+    border-radius: 20px;
+    scroll-snap-align: center;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.banner-item:active {
+    transform: scale(0.98);
+}
+
+.banner-content {
+    position: relative;
+    z-index: 2;
+}
+
+.banner-tag {
+    background: rgba(255, 255, 255, 0.25);
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(4px);
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+/* --- QUADRO DE AVISOS --- */
+.notice-board {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.notice-icon {
+    font-size: 1.4rem;
+    background: rgba(255, 193, 7, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bfa018;
+    flex-shrink: 0;
+}
+
+.notice-content h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #4d3e02;
+    margin-bottom: 4px;
+}
+
+.notice-content p {
+    font-size: 0.85rem;
+    color: #756318;
+    line-height: 1.4;
+    margin: 0;
+}
+
+
+/* --- CARDS & WIDGETS --- */
+.dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 18px;
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.card {
+    background: var(--surface-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.card:active {
+    transform: scale(0.98);
+}
+
+.highlight-card {
+    background: linear-gradient(135deg, var(--accent-color), #333);
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.highlight-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+    opacity: 0.4;
+    border-radius: 50%;
+}
+
+.highlight-card h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.highlight-card p {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.action-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    cursor: pointer;
+}
+
+.action-card .icon {
+    width: 48px;
+    height: 48px;
+    background-color: rgba(255, 0, 128, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.action-card .text h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.action-card .text p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}

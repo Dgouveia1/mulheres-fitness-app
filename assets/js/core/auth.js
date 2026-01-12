@@ -21,6 +21,9 @@ export const auth = {
             email,
             password,
         });
+        if (data?.user) {
+            this.user = data.user;
+        }
         return { data, error };
     },
 
@@ -40,13 +43,14 @@ export const auth = {
     },
 
     async getProfile() {
-        if (!this.user) return null;
+        if (!this.user) return { data: null, error: 'User not authenticated' };
 
         const { data, error } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', this.user.id)
-            .single();
+            .eq('id', this.user.id)
+            .maybeSingle();
 
         if (data) {
             this.user.profile = data; // Anexa o perfil ao objeto user
