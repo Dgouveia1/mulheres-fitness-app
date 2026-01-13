@@ -476,6 +476,124 @@
     margin-top: 2px;
 }
 
+/* --- ELEMENTOS DO V2 QUE FALTAM NO ADMIN.CSS --- */
+
+/* --- CLIENTS PAGE SPECIFIC --- */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.admin-table td {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.admin-table tr:hover td {
+    background: #fdf2f8;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-badge.active {
+    background: #dcfce7;
+    color: #059669;
+}
+
+/* CLIENT DETAILS MODAL & CHARTS */
+.tab-link {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+.tab-link.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.stat-box-small {
+    background: #f9fafb;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #eee;
+}
+.stat-box-small .label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.css-chart-container {
+    display: flex;
+    align-items: flex-end;
+    height: 200px;
+    gap: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.chart-bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.chart-bar {
+    width: 100%;
+    max-width: 40px;
+    background: var(--primary-light);
+    border-radius: 4px 4px 0 0;
+    transition: height 0.5s ease;
+}
+
+.chart-val {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #333;
+}
+.chart-label {
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 6px;
+    white-space: nowrap;
+}
+
 /* Modal Form */
 .modal-overlay {
     position: fixed;
@@ -498,7 +616,7 @@
 }
 .form-group { margin-bottom: 15px; }
 .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #374151; }
-.form-group input, .form-group select {
+.form-group input, .form-group select, .form-group textarea {
     width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95rem; font-family: inherit;
 }
 .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); ring: 2px var(--primary-color); }
