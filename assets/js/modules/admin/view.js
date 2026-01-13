@@ -166,8 +166,8 @@ export const AdminView = {
                     <div class="form-group"><label>Cliente</label><input type="text" id="app-client" name="client_name" required placeholder="Nome da cliente"></div>
                     <div class="form-group">
                         <label>Telefone (WhatsApp)</label>
-                        <input type="tel" id="app-phone" name="telefone" placeholder="5511999999999 (apenas números)">
-                        <small style="color:#666; font-size:0.8em;">Inclua o código do país (55) e DDD.</small>
+                        <input type="tel" id="app-phone" name="telefone" placeholder="11999999999 (apenas números)">
+                        <small style="color:#666; font-size:0.8em;">Inclua o DDD.</small>
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Data</label><input type="date" id="app-date" name="date" required></div>

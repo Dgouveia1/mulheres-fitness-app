@@ -819,7 +819,7 @@ export const AdminHandlers = {
                 if (cleanPhone.length >= 10) {
                     const dataFormatada = new Date(date + 'T' + time).toLocaleDateString('pt-BR');
                     const tipoFormatado = type === 'fisica' ? 'Avaliação Física' : (type === 'nutri' ? 'Nutricionista' : 'Personal');
-                    const message = `Olá ${clientName.split(' ')[0]}! Seu agendamento de *${tipoFormatado}* no Espaço Mulher está confirmado para dia *${dataFormatada}* às *${time}*.`;
+                    const message = `Olá ${clientName.split(' ')[0]}! Seu agendamento de *${tipoFormatado}* no Espaço Mulher Fitness Unidade 1 está confirmado para dia *${dataFormatada}* às *${time}*.`;
                     const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
                     window.open(waLink, '_blank');
                 }
