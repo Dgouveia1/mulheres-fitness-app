@@ -288,6 +288,25 @@ export const Services = {
             .order('full_name');
         return error ? [] : data;
     },
+    
+    // Criação de conta manual (sem login automático no front)
+    async createClientAccount(email, password, fullName, unit) {
+        // Usa a API de Admin do supabase (se disponível) ou signUp normal
+        // Como estamos no client-side, o signUp normal loga o usuário.
+        // O handler deve tratar o logout subsequente.
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: fullName,
+                    role: 'user',
+                    unit: unit
+                }
+            }
+        });
+        return { data, error };
+    },
 
     async getClientDetails(userId) {
         const { data, error } = await supabase
@@ -300,13 +319,17 @@ export const Services = {
 
     async getAssessments(userId) {
         // Busca histórico de avaliações (peso, medidas)
-        // Assume tabela 'assessments'
         const { data, error } = await supabase
             .from('assessments')
             .select('*')
             .eq('user_id', userId)
             .order('created_at', { ascending: false }); // Mais recente primeiro
-        return error ? [] : data;
+        
+        if (error) {
+            console.error('Erro ao buscar avaliações:', error);
+            return [];
+        }
+        return data;
     },
 
     async createAssessment(payload) {

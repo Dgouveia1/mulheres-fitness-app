@@ -179,19 +179,21 @@ export const AdminHandlers = {
 
     async loadClientAssessments(userId) {
         const historyBody = document.getElementById('history-table-body');
+        if (!historyBody) return;
+        
         historyBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Carregando...</td></tr>';
         
         const assessments = await Services.getAssessments(userId);
         this.activeClientData = assessments; // Cache
 
         // Render History Table
-        if (assessments.length === 0) {
+        if (!assessments || assessments.length === 0) {
             historyBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#999;">Nenhuma avaliação registrada.</td></tr>';
             // Zera stats
-            document.getElementById('val-imc').innerText = '--';
-            document.getElementById('val-weight').innerText = '-- kg';
-            document.getElementById('val-height').innerText = '-- m';
-            document.getElementById('weight-chart-admin').innerHTML = '<p style="color:#999; text-align:center; padding:30px;">Sem dados para gráfico.</p>';
+            if(document.getElementById('val-imc')) document.getElementById('val-imc').innerText = '--';
+            if(document.getElementById('val-weight')) document.getElementById('val-weight').innerText = '-- kg';
+            if(document.getElementById('val-height')) document.getElementById('val-height').innerText = '-- m';
+            if(document.getElementById('weight-chart-admin')) document.getElementById('weight-chart-admin').innerHTML = '<p style="color:#999; text-align:center; padding:30px;">Sem dados para gráfico.</p>';
             return;
         }
 
@@ -227,11 +229,13 @@ export const AdminHandlers = {
         document.querySelectorAll('.tab-link').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.client-tab-content').forEach(c => c.style.display = 'none');
         
-        // Ativa o botão clicado (busca pelo texto ou lógica, mas vamos simplificar pegando o index ou data attr se tivesse)
-        // Como o HTML está hardcoded, vamos selecionar pelos ID/classes
+        // Ativa o botão clicado
         const btnIndex = tabName === 'evolution' ? 0 : 1;
-        document.querySelectorAll('.tab-link')[btnIndex].classList.add('active');
-        document.getElementById(`tab-${tabName}`).style.display = 'block';
+        const tabs = document.querySelectorAll('.tab-link');
+        if (tabs[btnIndex]) tabs[btnIndex].classList.add('active');
+        
+        const contentDiv = document.getElementById(`tab-${tabName}`);
+        if(contentDiv) contentDiv.style.display = 'block';
     },
 
     async saveAssessment(e) {
@@ -266,7 +270,7 @@ export const AdminHandlers = {
             user_id: userId,
             weight: weight,
             height: height,
-            measurements: measurements, // Supabase salva JSONB automaticamente
+            measurements: measurements, 
             notes: form.notes.value
         };
 
@@ -276,7 +280,7 @@ export const AdminHandlers = {
         const { error } = await Services.createAssessment(payload);
 
         if (error) {
-            Toast.error('Erro ao salvar avaliação.');
+            Toast.error('Erro ao salvar: ' + error.message);
             console.error(error);
         } else {
             Toast.success('Avaliação registrada!');

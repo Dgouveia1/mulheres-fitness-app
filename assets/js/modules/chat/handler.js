@@ -315,15 +315,19 @@ const staffRoles = ['admin', 'reception', 'coach', 'nutri', 'operacional_user'];
 
     // --- REALTIME UPDATES ---
     setupRealtime() {
-        // Remove assinaturas anteriores para evitar duplicidade
-        supabase.removeAllChannels();
+        // Safe check to avoid websocket errors during reload
+        try {
+             supabase.removeAllChannels();
+        } catch(e) { console.log('Socket cleanup ignored'); }
 
         supabase
             .channel('public:messages')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
                 this.handleNewMessage(payload.new);
             })
-            .subscribe();
+            .subscribe((status) => {
+                if(status === 'SUBSCRIBED') console.log('Chat connected');
+            });
     },
 
     handleNewMessage(msg) {
