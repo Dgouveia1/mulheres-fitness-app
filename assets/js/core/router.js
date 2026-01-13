@@ -2,7 +2,7 @@ import { auth } from './auth.js';
 import { Layout } from './layout.js';
 import { Toast } from './toast.js';
 
-// Modules Views
+// Views Existentes
 import { AuthView } from '../modules/auth/view.js';
 import { DashboardView } from '../modules/dashboard/view.js';
 import { DashboardHandler } from '../modules/dashboard/handler.js';
@@ -15,46 +15,45 @@ import { ProfileHandler } from '../modules/profile/handler.js';
 import { AdminView } from '../modules/admin/view.js';
 import { AdminHandlers } from '../modules/admin/handler.js';
 import { ChatHandler } from '../modules/chat/handler.js';
-
-// WORKOUTS - Separados por Role
 import { AdminWorkoutHandler } from '../modules/workouts/admin_handler.js';
 import { StudentWorkoutHandler } from '../modules/workouts/student_handler.js';
-import { StudentWorkoutView } from '../modules/workouts/view.js'; // Apenas para placeholder na config
+
+// NOVAS VIEWS DE NUTRIÇÃO
+import { AdminNutritionView } from '../modules/admin/nutrition_view.js';
+import { AdminNutritionHandler } from '../modules/admin/nutrition_handler.js';
+import { UserNutritionHandler } from '../modules/nutrition/user_handler.js';
 
 export const router = {
     routes: {
-        // Rotas Públicas
+        // ... (Rotas existentes: login, register) ...
         '/login': { component: AuthView.Login, layout: 'auth', title: 'Login' },
         '/register': { component: AuthView.Register, layout: 'auth', title: 'Cadastro' },
 
-        // Rotas da Aluna (User)
+        // Aluna
         '/': { component: DashboardView.Template, protected: true, role: 'user', title: 'Dashboard', navIndex: 0 },
-        
-        // ROTA DE TREINOS AGORA ATIVA E CORRETA
-        // Nota: component aqui é uma função vazia pois o StudentWorkoutHandler.load() que injeta o HTML.
-        // Mas para manter compatibilidade, passamos uma função que retorna string vazia.
         '/treinos': { component: () => '', protected: true, role: 'user', title: 'Meus Treinos', navIndex: 1 },
-        
-        '/fitgran': { component: FitGranView.Main, protected: true, allow_all: true, title: 'Comunidade', navIndex: 2 },
-        '/fitflix': { component: FitFlixView.List, protected: true, allow_all: true, title: 'FitFlix', navIndex: 3 },
-        '/perfil': { component: ProfileView.Template, protected: true, role: 'user', title: 'Meu Perfil', navIndex: 4 },
-
-        // Player (Sem menu)
+        '/dieta': { component: () => '', protected: true, role: 'user', title: 'Minha Dieta', navIndex: 2 }, // NOVA ROTA
+        '/fitgran': { component: FitGranView.Main, protected: true, allow_all: true, title: 'Comunidade', navIndex: 3 },
+        '/fitflix': { component: FitFlixView.List, protected: true, allow_all: true, title: 'FitFlix', navIndex: 4 },
+        '/perfil': { component: ProfileView.Template, protected: true, role: 'user', title: 'Meu Perfil', navIndex: 5 },
         '/watch': { component: FitFlixView.Player, protected: true, allow_all: true, title: 'Assistir', layout: 'fullscreen' },
 
-        // Rotas Administrativas
+        // Admin
         '/admin': { component: AdminView.Dashboard, protected: true, layout: 'admin', title: 'Painel Gestão' },
         '/admin/agenda': { component: AdminView.Agenda, protected: true, layout: 'admin', title: 'Agenda' },
         '/admin/clientes': { component: AdminView.Clients, protected: true, layout: 'admin', title: 'Clientes' },
         '/admin/treinos': { component: AdminView.ManageWorkouts, protected: true, layout: 'admin', title: 'Gestão de Treinos' },
-        '/admin/nutricao': { component: AdminView.ManageDiet, protected: true, layout: 'admin', title: 'Nutrição' },
+        
+        // NOVA ROTA ADMIN
+        '/admin/nutricao': { component: AdminNutritionView.Main, protected: true, layout: 'admin', title: 'Gestão Nutricional' }, 
+        
         '/admin/chat': { component: AdminView.Chat, protected: true, layout: 'admin', title: 'Mensagens' },
         '/admin/fitflix': { component: AdminView.ManageFitFlix, protected: true, layout: 'admin', title: 'Gestão de Vídeos' },
     },
 
     async init() {
         window.addEventListener('hashchange', () => this.handleRoute());
-
+        
         document.body.addEventListener('click', e => {
             const link = e.target.closest('[data-link]');
             if (link) {
@@ -74,6 +73,7 @@ export const router = {
         this.updateNavIndicator();
     },
 
+    // ... (Mantenha attachAuthListener, checkRoleAndRedirect, getHash, navigate) ...
     attachAuthListener() {
         const app = document.getElementById('app');
         app.addEventListener('submit', async (e) => {
@@ -187,15 +187,16 @@ export const router = {
             this.updateAdminMenu(path);
             
             if (path === '/admin/chat') ChatHandler.initPageMode(); 
+            else if (path === '/admin/nutricao') AdminNutritionHandler.init(); // Init Nutrição
+            else if (path === '/admin/treinos') AdminWorkoutHandler.init();
             else ChatHandler.initDockMode();
 
         } else if (route.layout === 'auth' || route.layout === 'fullscreen') {
             app.innerHTML = Layout.Auth(contentHTML);
         } else {
-            // Layout Principal (User App)
             const mainContent = document.querySelector('.main-content-scroll');
             if (mainContent && document.querySelector('.bottom-nav')) {
-                if (path !== '/treinos') mainContent.innerHTML = contentHTML; // Evita sobrescrever se for treinos (handler cuida disso)
+                 if (path !== '/treinos' && path !== '/dieta') mainContent.innerHTML = contentHTML;
                 
                 document.querySelectorAll('.nav-item').forEach(el => {
                     el.classList.toggle('active', el.getAttribute('href') === path);
@@ -223,14 +224,10 @@ export const router = {
             indicator.style.left = `${leftPosition}px`;
         }
         
-        // Atualiza ícone do FitGran
         const fitGranIcon = document.getElementById('nav-icon-fitgran');
         if (fitGranIcon) {
-            if (currentPath === '/fitgran') {
-                fitGranIcon.innerText = '➕'; 
-            } else {
-                fitGranIcon.innerText = '📸'; 
-            }
+            if (currentPath === '/fitgran') fitGranIcon.innerText = '➕'; 
+            else fitGranIcon.innerText = '📸'; 
         }
     },
 
@@ -244,14 +241,13 @@ export const router = {
     executeScripts(path, user) {
         if (path.startsWith('/admin')) {
             AdminHandlers.init(path, user);
+            if(path === '/admin/nutricao') AdminNutritionHandler.init(); // Garante init
         } else {
             if (path === '/') DashboardHandler.load();
             if (path === '/fitflix') FitFlixHandler.loadList();
             if (path === '/watch') FitFlixHandler.loadPlayer();
-            
-            // AGORA SIM: Rota de treinos carregada corretamente
             if (path === '/treinos') StudentWorkoutHandler.load();
-            
+            if (path === '/dieta') UserNutritionHandler.load(); // Script de carregamento da dieta
             if (path === '/fitgran') FitGranHandler.load();
             if (path === '/perfil') ProfileHandler.load();
         }

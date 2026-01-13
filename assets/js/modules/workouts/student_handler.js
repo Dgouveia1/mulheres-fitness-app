@@ -5,6 +5,8 @@ import { WorkoutSessionController } from './controller.js';
 import { Toast } from '../../core/toast.js';
 
 export const StudentWorkoutHandler = {
+    workoutsCache: [], // Cache local para busca
+
     async load() {
         const { data: sessionData } = await auth.getSession();
         
@@ -22,12 +24,13 @@ export const StudentWorkoutHandler = {
         if(mainContent) mainContent.innerHTML = '<div class="loader-spinner" style="margin:50px auto;"></div>';
 
         try {
-            // Busca treinos da aluna
+            // Busca treinos da aluna e armazena no cache
             const workouts = await Services.getMyWorkouts(user.id);
+            this.workoutsCache = workouts || [];
             
             // Renderiza a lista
             if(mainContent) {
-                mainContent.innerHTML = StudentWorkoutView.List(workouts);
+                mainContent.innerHTML = StudentWorkoutView.List(this.workoutsCache);
             }
 
         } catch (error) {
@@ -40,6 +43,26 @@ export const StudentWorkoutHandler = {
     openSession(workoutId) {
         // Delega para o Controller de Sessão existente
         WorkoutSessionController.open(workoutId, 0);
+    },
+
+    filterWorkouts(term) {
+        const list = document.getElementById('student-workouts-list');
+        if (!list) return;
+
+        const lower = term.toLowerCase();
+        
+        const filtered = this.workoutsCache.filter(w => 
+            w.title.toLowerCase().includes(lower) || 
+            (w.description && w.description.toLowerCase().includes(lower))
+        );
+
+        if (filtered.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:#999; padding:30px;">Nenhum treino encontrado com este termo.</p>';
+            return;
+        }
+
+        // Reutiliza o método Card da View para renderizar apenas os itens
+        list.innerHTML = filtered.map(w => StudentWorkoutView.Card(w)).join('');
     }
 };
 

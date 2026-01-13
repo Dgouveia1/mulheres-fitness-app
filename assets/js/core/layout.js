@@ -1,15 +1,23 @@
-import { ChatView } from '../modules/chat/view.js';
-
 export const Layout = {
     // Layout App Mobile (Aluna)
-    Main: (contentHTML, activeRoute) => `
+    Main: (contentHTML, activeRoute) => {
+        // Injeta CSS de Nutrição se não existir
+        if (!document.getElementById('nutrition-css')) {
+            const link = document.createElement('link');
+            link.id = 'nutrition-css';
+            link.rel = 'stylesheet';
+            link.href = 'assets/css/modules/nutrition.css';
+            document.head.appendChild(link);
+        }
+
+        return `
         <header class="app-header">
             <div class="logo-container">
                 <span class="logo-main">Espaço</span>
                 <span class="logo-script">Mulher</span>
             </div>
             <div class="header-actions">
-                <button onclick="auth.signOut(); window.location.reload();" style="background:none; border:none; color:var(--primary-color);">
+                <button onclick="import('./assets/js/core/auth.js').then(m => m.auth.signOut().then(() => window.location.reload()))" style="background:none; border:none; color:var(--primary-color);">
                     <span class="material-icons">logout</span>
                 </button>
             </div>
@@ -20,16 +28,20 @@ export const Layout = {
         </main>
 
         <nav class="bottom-nav">
-            <div class="nav-container-inner">
+            <div class="nav-container-inner" style="justify-content: space-evenly;">
                 <div class="nav-indicator"></div>
                 <a href="/" class="nav-item ${activeRoute === '/' ? 'active' : ''}" data-link><span class="material-icons">🏠</span></a>
                 <a href="/treinos" class="nav-item ${activeRoute === '/treinos' ? 'active' : ''}" data-link><span class="material-icons">💪</span></a>
+                
+                <!-- NOVO ÍCONE DE DIETA -->
+                <a href="/dieta" class="nav-item ${activeRoute === '/dieta' ? 'active' : ''}" data-link><span class="material-icons">restaurant</span></a>
+                
                 <a href="/fitgran" class="nav-item ${activeRoute === '/fitgran' ? 'active' : ''}" data-link><span class="material-icons" id="nav-icon-fitgran">📸</span></a>
                 <a href="/fitflix" class="nav-item ${activeRoute === '/fitflix' ? 'active' : ''}" data-link><span class="material-icons">🎬</span></a>
                 <a href="/perfil" class="nav-item ${activeRoute === '/perfil' ? 'active' : ''}" data-link><span class="material-icons">👤</span></a>
             </div>
         </nav>
-    `,
+    `},
 
     Auth: (contentHTML) => `
         <main class="auth-layout">
@@ -37,7 +49,7 @@ export const Layout = {
         </main>
     `,
 
-    // Layout Administrativo (Desktop/Tablet Friendly)
+    // Layout Administrativo
     Admin: (contentHTML, user) => {
         const role = user?.profile?.role || 'user';
         const isAdmin = role === 'admin';
@@ -46,12 +58,19 @@ export const Layout = {
         const showWorkouts = isAdmin || role === 'coach';
         const showDiet = isAdmin || role === 'nutri';
 
-        // Injeta CSS do Chat dinamicamente se não existir
+        // CSS Injections
         if (!document.getElementById('chat-css')) {
             const link = document.createElement('link');
             link.id = 'chat-css';
             link.rel = 'stylesheet';
             link.href = 'assets/css/modules/chat.css';
+            document.head.appendChild(link);
+        }
+        if (!document.getElementById('nutrition-css')) {
+            const link = document.createElement('link');
+            link.id = 'nutrition-css';
+            link.rel = 'stylesheet';
+            link.href = 'assets/css/modules/nutrition.css';
             document.head.appendChild(link);
         }
 
@@ -81,7 +100,6 @@ export const Layout = {
                         <span class="material-icons">calendar_today</span> Agenda
                     </a>` : ''}
 
-                    <!-- LINK PARA A PÁGINA DEDICADA DE CHAT -->
                     <a href="/admin/chat" class="admin-nav-item" data-link>
                         <span class="material-icons">chat</span> Mensagens
                     </a>
@@ -101,7 +119,6 @@ export const Layout = {
                         <span class="material-icons">restaurant_menu</span> Nutrição
                     </a>` : ''}
 
-                    <!-- AGORA LINKANDO CORRETAMENTE PARA GESTÃO DE VIDEOS -->
                     <a href="/admin/fitflix" class="admin-nav-item" data-link>
                         <span class="material-icons">video_library</span> FitFlix
                     </a>
@@ -121,8 +138,6 @@ export const Layout = {
                 <div id="admin-content-area" class="admin-content animate-fade-in">
                     ${contentHTML}
                 </div>
-
-                <!-- DOCK MANTIDO PARA OUTRAS PÁGINAS, OCULTO NA PÁGINA DE CHAT VIA JS -->
                 <div id="chat-dock-wrapper"></div>
             </main>
         </div>

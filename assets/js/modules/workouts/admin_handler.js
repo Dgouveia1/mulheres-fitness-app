@@ -19,6 +19,14 @@ export const AdminWorkoutHandler = {
         this.loadInitialData().then(() => {
             this.renderMain();
         });
+        
+        // Fecha o dropdown se clicar fora
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#student-search-input') && !e.target.closest('#student-dropdown-list')) {
+                const drop = document.getElementById('student-dropdown-list');
+                if (drop) drop.style.display = 'none';
+            }
+        });
     },
 
     renderMain() {
@@ -233,14 +241,49 @@ export const AdminWorkoutHandler = {
         this.renderSourceList(val);
     },
 
+    // --- NOVA LÓGICA DO DROPDOWN ---
+    showStudentDropdown() {
+        const drop = document.getElementById('student-dropdown-list');
+        if (drop) drop.style.display = 'block';
+    },
+
+    toggleStudentDropdown() {
+        const drop = document.getElementById('student-dropdown-list');
+        if (drop) drop.style.display = drop.style.display === 'none' ? 'block' : 'none';
+    },
+
+    filterStudentDropdown(term) {
+        const listContainer = document.getElementById('student-list-content');
+        if (!listContainer) return;
+
+        const filtered = this.studentsCache.filter(s => s.full_name.toLowerCase().includes(term.toLowerCase()));
+
+        if (filtered.length === 0) {
+            listContainer.innerHTML = '<div style="padding:15px; color:#999; text-align:center;">Nenhuma aluna encontrada</div>';
+            return;
+        }
+
+        listContainer.innerHTML = filtered.map(s => `
+            <div class="dropdown-item-student" onclick="AdminWorkoutHandler.selectTarget('${s.id}', '${s.full_name}')" 
+                    style="padding:10px 12px; border-bottom:1px solid #f9f9f9; cursor:pointer; display:flex; align-items:center; gap:8px; color:#333;">
+                <div style="width:24px; height:24px; background:#eee; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#666;">${s.full_name.charAt(0)}</div>
+                ${s.full_name}
+            </div>
+        `).join('');
+    },
+
+    selectTarget(id, name) {
+        document.getElementById('student-search-input').value = name;
+        document.getElementById('builder-student').value = id;
+        document.getElementById('student-dropdown-list').style.display = 'none';
+
+        // Lógica que já existia no handleTargetChange
+        this.handleTargetChange(id);
+    },
+
     handleTargetChange(val) {
         const loaderGroup = document.getElementById('template-loader-group');
-        // Se selecionar "Salvar como Template", esconde a opção de carregar template para evitar confusão visual?
-        // Na verdade, pode ser útil carregar um template para editar e salvar como outro. Vamos manter visível.
-        if (val === 'template') {
-            // Lógica opcional visual
-        }
-        
+        // Se selecionar "Salvar como Template", mostra opções extras se necessário
         if (loaderGroup) loaderGroup.style.display = 'block';
     },
 
@@ -380,7 +423,11 @@ export const AdminWorkoutHandler = {
             this.builderState.items = [];
             document.getElementById('builder-title').value = '';
             document.getElementById('builder-desc').value = '';
+            
+            // Reset dos campos novos
             document.getElementById('builder-student').value = '';
+            document.getElementById('student-search-input').value = '';
+            
             this.renderBuilderItems();
 
             // Se salvou como template, recarrega cache

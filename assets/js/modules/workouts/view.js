@@ -108,27 +108,63 @@ export const AdminWorkoutView = {
         </div>
     `,
 
-    // 3. Template do Construtor (Design Renovado)
+    // 3. Template do Construtor (ATUALIZADO COM SEARCH BAR)
     BuilderTemplate: (students, templates) => `
         <div class="builder-container">
             
             <!-- ESQUERDA: CONFIGURAÇÃO & LISTA -->
             <div class="builder-sidebar">
                 <!-- Painel 1: Destinatário e Dados -->
-                <div class="builder-panel" style="flex-shrink: 0;">
+                <div class="builder-panel" style="flex-shrink: 0; overflow:visible;">
                     <div class="panel-header">
                         <h3><span class="material-icons">person</span> Destinatário</h3>
                     </div>
-                    <div class="panel-body">
-                        <div class="form-group">
+                    <div class="panel-body" style="overflow:visible;">
+                        <div class="form-group" style="position:relative;">
                             <label>Para quem é este treino?</label>
-                            <select id="builder-student" onchange="AdminWorkoutHandler.handleTargetChange(this.value)" class="custom-select" style="font-weight:600;">
-                                <option value="" disabled selected>-- Selecione --</option>
-                                <option value="template" style="color:var(--primary-color); font-weight:bold;">💾 Salvar como MODELO (Template)</option>
-                                <optgroup label="Alunas Cadastradas">
-                                    ${students && students.length > 0 ? students.map(s => `<option value="${s.id}">${s.full_name}</option>`).join('') : '<option disabled>Nenhuma aluna encontrada</option>'}
-                                </optgroup>
-                            </select>
+                            
+                            <!-- Input Escondido para Guardar o ID Selecionado -->
+                            <input type="hidden" id="builder-student">
+
+                            <!-- Campo de Busca Interativo -->
+                            <div style="position:relative;">
+                                <input type="text" 
+                                       id="student-search-input" 
+                                       class="custom-select" 
+                                       placeholder="🔍 Buscar aluna..." 
+                                       autocomplete="off"
+                                       onfocus="AdminWorkoutHandler.showStudentDropdown()"
+                                       onkeyup="AdminWorkoutHandler.filterStudentDropdown(this.value)"
+                                       style="padding-right: 30px; cursor: text;">
+                                
+                                <span class="material-icons" 
+                                      onclick="AdminWorkoutHandler.toggleStudentDropdown()"
+                                      style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#999; cursor:pointer;">
+                                      expand_more
+                                </span>
+
+                                <!-- Lista Suspensa -->
+                                <div id="student-dropdown-list" 
+                                     style="display:none; position:absolute; top:100%; left:0; width:100%; background:white; border:1px solid #ddd; border-radius:8px; max-height:250px; overflow-y:auto; z-index:100; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin-top:5px;">
+                                    
+                                    <!-- Opção Fixa: Template -->
+                                    <div onclick="AdminWorkoutHandler.selectTarget('template', '💾 Salvar como MODELO (Template)')" 
+                                         style="padding:12px; border-bottom:1px solid #eee; cursor:pointer; background:#fdf2f8; color:var(--primary-color); font-weight:700; display:flex; align-items:center; gap:8px;">
+                                        <span class="material-icons">save</span> Salvar como MODELO
+                                    </div>
+                                    
+                                    <!-- Lista de Alunas -->
+                                    <div id="student-list-content">
+                                        ${students && students.length > 0 ? students.map(s => `
+                                            <div class="dropdown-item-student" onclick="AdminWorkoutHandler.selectTarget('${s.id}', '${s.full_name}')" 
+                                                 style="padding:10px 12px; border-bottom:1px solid #f9f9f9; cursor:pointer; display:flex; align-items:center; gap:8px; color:#333;">
+                                                <div style="width:24px; height:24px; background:#eee; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#666;">${s.full_name.charAt(0)}</div>
+                                                ${s.full_name}
+                                            </div>
+                                        `).join('') : '<div style="padding:15px; color:#999; text-align:center;">Nenhuma aluna encontrada</div>'}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <div id="template-loader-group" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed #eee;">
@@ -222,9 +258,6 @@ export const AdminWorkoutView = {
     `
 };
 
-// =======================================================
-// VISUALIZAÇÃO DA ALUNA (Exportada separadamente agora)
-// =======================================================
 export const StudentWorkoutView = {
     List: (workouts) => {
         if (!workouts || workouts.length === 0) {
@@ -240,22 +273,18 @@ export const StudentWorkoutView = {
         return `
             <div class="page-content">
                 <h2 class="section-title">Meus Treinos</h2>
-                <div class="workouts-list-student">
-                    ${workouts.map(w => `
-                        <div class="workout-card-student" onclick="StudentWorkoutHandler.openSession(${w.id})">
-                            <div class="wc-info">
-                                <h3>${w.title}</h3>
-                                <p>${w.description || 'Sem descrição'}</p>
-                                <div class="wc-meta">
-                                    <span class="badge">${w.items ? w.items.length : 0} exercícios</span>
-                                    <span class="badge">${w.difficulty_level || 'Geral'}</span>
-                                </div>
-                            </div>
-                            <div class="wc-action">
-                                <span class="material-icons">play_circle</span>
-                            </div>
-                        </div>
-                    `).join('')}
+                
+                <!-- BARRA DE BUSCA (ADICIONADA) -->
+                <div style="margin-bottom: 20px;">
+                    <input type="text" 
+                           placeholder="🔍 Buscar treino..." 
+                           class="search-input"
+                           onkeyup="StudentWorkoutHandler.filterWorkouts(this.value)"
+                           style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 1rem; outline: none;">
+                </div>
+
+                <div class="workouts-list-student" id="student-workouts-list">
+                    ${workouts.map(w => StudentWorkoutView.Card(w)).join('')}
                 </div>
                 
                 <!-- MODAL DE SESSÃO DE TREINO (PLAYER) -->
@@ -312,5 +341,21 @@ export const StudentWorkoutView = {
                 </div>
             </div>
         `;
-    }
+    },
+
+    Card: (w) => `
+        <div class="workout-card-student" onclick="StudentWorkoutHandler.openSession(${w.id})">
+            <div class="wc-info">
+                <h3>${w.title}</h3>
+                <p>${w.description || 'Sem descrição'}</p>
+                <div class="wc-meta">
+                    <span class="badge">${w.items ? w.items.length : 0} exercícios</span>
+                    <span class="badge">${w.difficulty_level || 'Geral'}</span>
+                </div>
+            </div>
+            <div class="wc-action">
+                <span class="material-icons">play_circle</span>
+            </div>
+        </div>
+    `
 };

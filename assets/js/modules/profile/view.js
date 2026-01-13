@@ -16,7 +16,7 @@ export const ProfileView = {
             <div class="xp-text" id="xp-text">0 / 10 para o próximo nível</div>
         </div>
 
-        <!-- Cards de Stats -->
+        <!-- Cards de Stats Gamification -->
         <div class="stats-overview">
             <div class="stat-box">
                 <span class="stat-value" id="stat-workouts">0</span>
@@ -32,8 +32,7 @@ export const ProfileView = {
         <div class="streak-section">
             <div class="streak-card">
                 <div class="streak-header">
-                    <span class="streak-title">📅 Sua Semana</span>
-                    <span style="font-size: 0.8rem; color: #999;">Histórico Recente</span>
+                    <span class="streak-title">📅 Sua Frequência</span>
                 </div>
                 <div class="streak-days">
                     <div class="day-circle"><span>D</span><div class="circle" id="day-0"></div></div>
@@ -44,13 +43,40 @@ export const ProfileView = {
                     <div class="day-circle"><span>S</span><div class="circle" id="day-5"></div></div>
                     <div class="day-circle"><span>S</span><div class="circle" id="day-6"></div></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- NOVA SEÇÃO: EVOLUÇÃO FÍSICA -->
+        <div class="streak-section" id="physical-stats-section">
+            <div class="streak-card">
+                <div class="streak-header">
+                    <span class="streak-title">⚖️ Minha Evolução</span>
+                </div>
                 
-                <!-- Gráfico de Volume Simples (HTML/CSS) -->
-                <div style="margin-top: 20px; border-top: 1px dashed #eee; padding-top: 15px;">
-                    <span class="streak-title" style="font-size: 0.9rem; margin-bottom: 10px;">📊 Esforço Diário (Carga Total)</span>
-                    <div class="chart-container" id="volume-chart">
-                        <!-- Barras injetadas via JS -->
-                    </div>
+                <div id="stats-loading" style="text-align:center; color:#999;">Carregando dados...</div>
+
+                <div id="stats-content" style="display:none;">
+                     <!-- Resumo Atual -->
+                     <div style="display:flex; justify-content:space-between; margin-bottom:20px; background:#f9fafb; padding:15px; border-radius:12px;">
+                        <div style="text-align:center;">
+                            <small style="color:#666; display:block;">Peso</small>
+                            <strong id="user-weight" style="font-size:1.2rem; color:#333;">--</strong>
+                        </div>
+                         <div style="text-align:center;">
+                            <small style="color:#666; display:block;">IMC</small>
+                            <strong id="user-imc" style="font-size:1.2rem; color:var(--primary-color);">--</strong>
+                        </div>
+                         <div style="text-align:center;">
+                            <small style="color:#666; display:block;">Cintura</small>
+                            <strong id="user-waist" style="font-size:1.2rem; color:#333;">--</strong>
+                        </div>
+                     </div>
+
+                     <!-- Gráfico de Peso -->
+                     <p style="font-size:0.8rem; font-weight:700; color:#666; margin-bottom:10px;">HISTÓRICO DE PESO</p>
+                     <div class="chart-container" id="weight-chart-user" style="height:150px; align-items:flex-end; gap:5px;">
+                         <!-- Barras injetadas via JS -->
+                     </div>
                 </div>
             </div>
         </div>

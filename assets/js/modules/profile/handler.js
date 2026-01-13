@@ -7,18 +7,23 @@ export const ProfileHandler = {
         const btn = document.getElementById('logout-btn-profile');
         if (btn) btn.onclick = async () => { await auth.signOut(); window.location.hash = '/login'; };
 
-        // 2. Buscar Dados e Calcular Níveis
+        // 2. Buscar Sessão
         const { data: sessionData } = await auth.getSession();
         if (!sessionData.session) return;
         const userId = sessionData.session.user.id;
 
+        // 3. Stats Gamification
         const stats = await Services.getUserStats(userId);
-
-        // Preenche Stats Básicos
         document.getElementById('stat-workouts').innerText = stats.totalWorkouts;
         document.getElementById('stat-streak').innerText = stats.streak;
+        this.calculateLevel(stats.totalWorkouts);
+        this.renderWeeklyFreq(stats.weeklyFreq);
 
-        // Lógica de Gamificação (Níveis)
+        // 4. Stats Físicos (NOVO)
+        this.loadPhysicalStats(userId);
+    },
+
+    calculateLevel(totalWorkouts) {
         const levels = [
             { max: 10, title: '🌱 Iniciante', color: '#888' },
             { max: 30, title: '🦋 Em Evolução', color: '#ff40ac' },
@@ -31,63 +36,102 @@ export const ProfileHandler = {
         let levelTitle = 'Iniciante';
 
         for (let i = 0; i < levels.length; i++) {
-            if (stats.totalWorkouts < levels[i].max) {
+            if (totalWorkouts < levels[i].max) {
                 currentLevel = i + 1;
                 nextLevelGoal = levels[i].max;
                 levelTitle = levels[i].title;
                 break;
             }
         }
-        if (currentLevel === 0) { // Max level case
+        if (currentLevel === 0) { 
             currentLevel = levels.length;
-            nextLevelGoal = stats.totalWorkouts * 1.5;
+            nextLevelGoal = totalWorkouts * 1.5;
             levelTitle = levels[levels.length - 1].title;
         }
 
-        // Atualiza UI do Nível
         document.getElementById('level-badge').innerText = currentLevel;
         document.getElementById('level-title').innerText = levelTitle;
 
-        // Barra de Progresso XP
         const previousGoal = currentLevel > 1 ? levels[currentLevel - 2].max : 0;
         const range = nextLevelGoal - previousGoal;
-        const currentProgress = stats.totalWorkouts - previousGoal;
+        const currentProgress = totalWorkouts - previousGoal;
         const percent = Math.min(100, Math.max(0, (currentProgress / range) * 100));
 
         setTimeout(() => {
             const bar = document.getElementById('xp-bar');
             if (bar) bar.style.width = `${percent}%`;
         }, 100);
-        document.getElementById('xp-text').innerText = `${stats.totalWorkouts} / ${nextLevelGoal} treinos para subir de nível`;
+        document.getElementById('xp-text').innerText = `${totalWorkouts} / ${nextLevelGoal} treinos para subir de nível`;
+    },
 
-        // Preenche Dias da Semana
+    renderWeeklyFreq(weeklyFreq) {
         const todayDay = new Date().getDay();
-        stats.weeklyFreq.forEach((done, index) => {
+        weeklyFreq.forEach((done, index) => {
             const circle = document.getElementById(`day-${index}`);
             if (circle) {
                 if (done) {
                     circle.classList.add('active');
                     circle.innerText = '✓';
                 }
-                // Destaque para o dia de hoje
                 if (index === todayDay) {
                     circle.style.border = '2px solid var(--primary-color)';
                 }
             }
         });
+    },
 
-        // Gráfico de Volume
-        const chartContainer = document.getElementById('volume-chart');
-        if (chartContainer) {
-            const barsHTML = stats.weeklyFreq.map((active, idx) => {
-                const height = active ? (Math.random() * 50 + 40) + '%' : '4px';
-                const isFilled = active ? 'filled' : '';
-                return `
-                <div class="chart-bar-wrapper">
-                    <div class="chart-bar ${isFilled}" style="height: ${height}"></div>
-                </div>`;
-            }).join('');
-            chartContainer.innerHTML = barsHTML;
+    async loadPhysicalStats(userId) {
+        const loading = document.getElementById('stats-loading');
+        const content = document.getElementById('stats-content');
+        
+        try {
+            const assessments = await Services.getAssessments(userId);
+            
+            if (!assessments || assessments.length === 0) {
+                loading.innerText = 'Nenhuma avaliação física registrada ainda.';
+                return;
+            }
+
+            loading.style.display = 'none';
+            content.style.display = 'block';
+
+            // Última avaliação
+            const latest = assessments[0];
+            const imc = (latest.weight / (latest.height * latest.height)).toFixed(1);
+
+            document.getElementById('user-weight').innerText = `${latest.weight} kg`;
+            document.getElementById('user-imc').innerText = imc;
+            document.getElementById('user-waist').innerText = latest.measurements?.waist ? `${latest.measurements.waist} cm` : '-';
+
+            // Gráfico de Peso
+            this.renderWeightChart(assessments);
+
+        } catch (e) {
+            console.error(e);
+            loading.innerText = 'Erro ao carregar dados.';
         }
+    },
+
+    renderWeightChart(data) {
+        const container = document.getElementById('weight-chart-user');
+        // Pega as últimas 7 avaliações e ordena antiga -> nova
+        const chartData = data.slice(0, 7).reverse();
+        
+        const weights = chartData.map(d => d.weight);
+        const minW = Math.min(...weights) - 2;
+        const maxW = Math.max(...weights) + 2;
+        const range = maxW - minW;
+
+        container.innerHTML = chartData.map(d => {
+            const heightPercent = ((d.weight - minW) / range) * 100;
+            const date = new Date(d.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+            
+            return `
+            <div class="chart-bar-wrapper">
+                <span style="font-size:0.7rem; color:#666; margin-bottom:2px;">${d.weight}</span>
+                <div class="chart-bar filled" style="height: ${Math.max(15, heightPercent)}%"></div>
+                <span style="font-size:0.65rem; color:#999; margin-top:4px;">${date}</span>
+            </div>`;
+        }).join('');
     }
 };

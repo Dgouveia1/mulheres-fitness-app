@@ -6,7 +6,6 @@ export const Services = {
     // MÓDULO 1: FITFLIX (VÍDEOS)
     // =========================================================================
     
-    // Leitura (App Aluna)
     async getVideos() {
         const { data, error } = await supabase
             .from('fitflix_videos')
@@ -30,7 +29,6 @@ export const Services = {
         return error ? null : data;
     },
 
-    // Gestão (Admin)
     async uploadFitFlixFile(file, folder) {
         const cleanName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9.]/g, "_");
         const filePath = `${folder}/${Date.now()}_${cleanName}`;
@@ -121,7 +119,6 @@ export const Services = {
             await supabase.from('fitgran_likes').insert([{ post_id: postId, user_id: userId }]);
         }
 
-        // Recalcular contagem (Trigger no DB faria isso, mas aqui garantimos atualização visual)
         const { count } = await supabase
             .from('fitgran_likes')
             .select('*', { count: 'exact', head: true })
@@ -195,7 +192,6 @@ export const Services = {
     },
 
     async logWorkoutSet(logData) {
-        // logData: { user_id, workout_id, exercise_id, load_kg, reps_performed }
         const { data } = await supabase.from('workout_logs').insert([logData]);
         return data;
     },
@@ -211,7 +207,6 @@ export const Services = {
 
         const uniqueDays = new Set(logs.map(l => l.performed_at.split('T')[0]));
         
-        // Frequência Semanal
         const weeklyFreq = [0, 0, 0, 0, 0, 0, 0];
         const now = new Date();
         const startOfWeek = new Date(now);
@@ -225,7 +220,7 @@ export const Services = {
 
         return {
             totalWorkouts: uniqueDays.size,
-            streak: uniqueDays.size > 0 ? 1 : 0, // Simplificado, lógica real exigiria verificar dias consecutivos
+            streak: uniqueDays.size > 0 ? 1 : 0, 
             weeklyFreq
         };
     },
@@ -283,6 +278,47 @@ export const Services = {
         return { error };
     },
 
+    // --- CLIENTES & AVALIAÇÕES (NOVO) ---
+    async getClients() {
+        // Busca perfis que são 'user'
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('role', 'user')
+            .order('full_name');
+        return error ? [] : data;
+    },
+
+    async getClientDetails(userId) {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
+        return { data, error };
+    },
+
+    async getAssessments(userId) {
+        // Busca histórico de avaliações (peso, medidas)
+        // Assume tabela 'assessments'
+        const { data, error } = await supabase
+            .from('assessments')
+            .select('*')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false }); // Mais recente primeiro
+        return error ? [] : data;
+    },
+
+    async createAssessment(payload) {
+        // payload: { user_id, weight, height, measurements: { waist, hip, etc }, notes }
+        const { data, error } = await supabase
+            .from('assessments')
+            .insert([payload])
+            .select()
+            .single();
+        return { data, error };
+    },
+
 
     // =========================================================================
     // MÓDULO 5: CHAT & COMUNICAÇÃO
@@ -314,7 +350,6 @@ export const Services = {
     },
 
     async sendMessage(senderId, recipientId, content) {
-        // Busca nome para denormalização rápida (opcional, mas útil pro UI)
         const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', senderId).single();
         
         const payload = {
@@ -330,16 +365,13 @@ export const Services = {
 
 
     // =========================================================================
-    // MÓDULO 6: GESTÃO DE TREINOS (NOVO - ADMIN COACH)
+    // MÓDULO 6: GESTÃO DE TREINOS
     // =========================================================================
 
-    // --- Upload de Arquivos de Exercício (Novo) ---
     async uploadExerciseAsset(file) {
-        // Gera nome único
         const cleanName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9.]/g, "_");
         const filePath = `${Date.now()}_${cleanName}`;
 
-        // Upload para bucket 'exercise-assets'
         const { error } = await supabase.storage
             .from('exercise-assets')
             .upload(filePath, file, { cacheControl: '3600', upsert: false });
@@ -352,12 +384,8 @@ export const Services = {
         return publicUrl;
     },
 
-    // --- Exercícios ---
     async getAllExercises() {
-        const { data, error } = await supabase
-            .from('exercises')
-            .select('*')
-            .order('name');
+        const { data, error } = await supabase.from('exercises').select('*').order('name');
         return error ? [] : data;
     },
 
@@ -376,9 +404,7 @@ export const Services = {
         return { error };
     },
 
-    // --- Templates & Treinos ---
     async getTemplates(adminId) {
-        // Busca treinos criados pelo Admin (usados como templates)
         const { data, error } = await supabase
             .from('workouts')
             .select(`*, items:workout_items (count)`)
@@ -407,7 +433,6 @@ export const Services = {
     },
 
     async createWorkoutRoutine(workoutData, items) {
-        // 1. Cria o Treino Pai
         const { data: workout, error: wError } = await supabase
             .from('workouts')
             .insert([workoutData])
@@ -416,7 +441,6 @@ export const Services = {
 
         if (wError) return { error: wError };
 
-        // 2. Cria os Itens Filhos
         if (items && items.length > 0) {
             const itemsPayload = items.map((item, idx) => ({
                 workout_id: workout.id,
@@ -433,7 +457,6 @@ export const Services = {
                 .insert(itemsPayload);
 
             if (iError) {
-                // Rollback manual
                 await supabase.from('workouts').delete().eq('id', workout.id);
                 return { error: iError };
             }
@@ -442,9 +465,112 @@ export const Services = {
     },
 
     async deleteWorkout(id) {
-        // Supabase Cascade deve lidar com os items, mas por segurança...
         await supabase.from('workout_items').delete().eq('workout_id', id);
         const { error } = await supabase.from('workouts').delete().eq('id', id);
         return { error };
+    },
+
+     // =========================================================================
+    // MÓDULO 7: NUTRIÇÃO
+    // =========================================================================
+
+    async getActiveDiet(userId) {
+        const { data: diet, error } = await supabase
+            .from('diets')
+            .select('*')
+            .eq('assigned_to', userId)
+            .eq('is_active', true)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+        
+        if (error || !diet) return null;
+
+        const { data: meals } = await supabase
+            .from('diet_meals')
+            .select(`*, foods:diet_foods(*)`)
+            .eq('diet_id', diet.id)
+            .order('order_index', { ascending: true });
+
+        if (meals) {
+            meals.forEach(meal => {
+                if (meal.foods) meal.foods.sort((a,b) => a.order_index - b.order_index);
+            });
+        }
+
+        return { ...diet, meals: meals || [] };
+    },
+
+    async getDietTemplates(adminId) {
+        const { data, error } = await supabase
+            .from('diets')
+            .select('*')
+            .eq('assigned_to', adminId)
+            .order('created_at', { ascending: false });
+        return data || [];
+    },
+
+    async getDietById(dietId) {
+        const { data: diet, error } = await supabase
+            .from('diets')
+            .select('*')
+            .eq('id', dietId)
+            .single();
+        
+        if (error || !diet) return null;
+
+        const { data: meals } = await supabase
+            .from('diet_meals')
+            .select(`*, foods:diet_foods(*)`)
+            .eq('diet_id', diet.id)
+            .order('order_index', { ascending: true });
+
+        if (meals) {
+            meals.forEach(meal => {
+                if (meal.foods) meal.foods.sort((a,b) => a.order_index - b.order_index);
+            });
+        }
+
+        return { ...diet, meals: meals || [] };
+    },
+
+    async createDietPlan(dietHeader, mealsData) {
+        const { data: diet, error: dError } = await supabase
+            .from('diets')
+            .insert([dietHeader])
+            .select()
+            .single();
+
+        if (dError) return { error: dError };
+
+        for (let i = 0; i < mealsData.length; i++) {
+            const meal = mealsData[i];
+            
+            const { data: newMeal, error: mError } = await supabase
+                .from('diet_meals')
+                .insert([{
+                    diet_id: diet.id,
+                    name: meal.name,
+                    time: meal.time,
+                    order_index: i
+                }])
+                .select()
+                .single();
+            
+            if (mError) continue; 
+
+            if (meal.foods && meal.foods.length > 0) {
+                const foodsPayload = meal.foods.map((f, idx) => ({
+                    meal_id: newMeal.id,
+                    food_item: f.food_item,
+                    portion: f.portion,
+                    order_index: idx
+                }));
+
+                await supabase.from('diet_foods').insert(foodsPayload);
+            }
+        }
+
+        return { data: diet };
     }
 };
