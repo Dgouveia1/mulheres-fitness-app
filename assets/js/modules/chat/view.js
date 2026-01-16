@@ -1,7 +1,7 @@
 export const ChatView = {
     // --- DOCK MODE (Estilo Facebook) ---
     Container: () => `
-        <div id="chat-dock-container">
+        <div id="chat-dock-container" style="display:none;">
             <div id="chat-dock" class="chat-dock minimized">
                 <div class="chat-dock-header" onclick="ChatHandler.toggleDock()">
                     <div class="title-area">
@@ -25,7 +25,7 @@ export const ChatView = {
         // Ícone Especial para o Grupo
         if (user.id === 'STAFF_GROUP') {
             return `
-            <div class="chat-user-item" onclick="ChatHandler.openDockWindow('${user.id}', '${user.full_name}')" style="background:#fdf2f8;">
+            <div class="chat-user-item" onclick="ChatHandler.openDockWindow('${user.id}', 'Chat Geral')" style="background:#fdf2f8;">
                 <div class="chat-user-avatar" style="background:var(--primary-color); color:white; display:flex; align-items:center; justify-content:center; border-radius:50%;">
                     <span class="material-icons" style="font-size:1.2rem;">groups</span>
                 </div>
@@ -48,13 +48,14 @@ export const ChatView = {
         const fullName = user.full_name || 'Usuário';
         const initial = fullName.charAt(0).toUpperCase();
 
-        // Avatar fallback com iniciais
-        const avatarHTML = user.avatar_url 
-            ? `<img src="${user.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` 
+        // Avatar fallback seguro
+        // Nota: O schema do banco pode não ter avatar_url, então usamos fallback sempre
+        const avatarHTML = (user.avatar_url && user.avatar_url.length > 5)
+            ? `<img src="${user.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.onerror=null;this.parentNode.innerHTML='${initial}';">` 
             : `<div style="width:100%;height:100%;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;">${initial}</div>`;
 
         return `
-        <div class="chat-user-item" onclick="ChatHandler.openDockWindow('${user.id}', '${fullName}')">
+        <div class="chat-user-item" onclick="ChatHandler.openDockWindow('${user.id}', '${encodeURIComponent(fullName)}')">
             <div class="chat-user-avatar">
                 ${avatarHTML}
                 <div class="status-indicator"></div>
@@ -75,7 +76,7 @@ export const ChatView = {
                     <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">${name}</span>
                 </div>
                 <div class="chat-window-actions">
-                    <button onclick="event.stopPropagation(); ChatHandler.closeWindow('${id}')" title="Fechar"><span class="material-icons" style="font-size:1.1rem;">close</span></button>
+                    <button type="button" onclick="event.stopPropagation(); ChatHandler.closeWindow('${id}')" title="Fechar"><span class="material-icons" style="font-size:1.1rem;">close</span></button>
                 </div>
             </div>
             <div class="chat-messages-area" id="msgs-${id}">
@@ -93,13 +94,12 @@ export const ChatView = {
         const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
         return `<div class="chat-message-bubble ${isMe ? 'sent' : 'received'}">
-            ${(!isMe && msg.sender_name) ? `<div style="font-size:0.7rem; color:var(--primary-color); font-weight:700; margin-bottom:2px;">${msg.sender_name.split(' ')[0]}</div>` : ''}
             ${msg.content}
             <div class="chat-time">${time}</div>
         </div>`;
     },
 
-    // --- PAGE MODE ---
+    // --- PAGE MODE (MOBILE) ---
     ContactItem: (user, lastMsg = '', isActive = false) => {
         if (user.id === 'STAFF_GROUP') {
             return `
@@ -120,9 +120,9 @@ export const ChatView = {
         const role = { 'admin': 'Admin', 'reception': 'Recepção', 'coach': 'Treinadora', 'nutri': 'Nutricionista', 'user': 'Aluna', 'system': 'Sistema' }[user.role] || 'Staff';
         const initial = name.charAt(0).toUpperCase();
         
-        const avatarHTML = user.avatar_url 
-            ? `<img src="${user.avatar_url}">` 
-            : `<div class="placeholder" style="width:100%;height:100%;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#666;">${initial}</div>`;
+        const avatarHTML = (user.avatar_url && user.avatar_url.length > 5)
+            ? `<img src="${user.avatar_url}" onerror="this.onerror=null;this.parentNode.innerHTML='<div class=\\'placeholder\\' style=\\'width:100%;height:100%;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#666;font-weight:700;\\'>${initial}</div>'">` 
+            : `<div class="placeholder" style="width:100%;height:100%;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#666;font-weight:700;">${initial}</div>`;
 
         return `
         <div class="chat-list-item ${isActive ? 'active' : ''}" onclick="ChatHandler.loadConversation('${user.id}')">
@@ -132,7 +132,7 @@ export const ChatView = {
             </div>
             <div class="chat-list-info">
                 <div class="chat-list-name">${name.split(' ')[0]} <span style="font-size:0.7em;color:#999;">(${role})</span></div>
-                <div class="chat-list-preview">${lastMsg || 'Iniciar conversa'}</div>
+                <div class="chat-list-preview">${lastMsg || 'Toque para conversar'}</div>
             </div>
         </div>`;
     },
@@ -144,7 +144,9 @@ export const ChatView = {
 
         const avatarHTML = isGroup 
             ? `<div style="background:var(--primary-color); color:white; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center;"><span class="material-icons">groups</span></div>`
-            : (user.avatar_url ? `<img src="${user.avatar_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">` : `<div style="width:40px;height:40px;background:#eee;border-radius:50%;display:flex;align-items:center;justify-content:center;">${initial}</div>`);
+            : ((user.avatar_url && user.avatar_url.length > 5) 
+                ? `<img src="${user.avatar_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"> <div style="width:40px;height:40px;background:#eee;border-radius:50%;display:none;align-items:center;justify-content:center;">${initial}</div>` 
+                : `<div style="width:40px;height:40px;background:#eee;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">${initial}</div>`);
 
         return `
         <div class="chat-main-header">
@@ -172,14 +174,11 @@ export const ChatView = {
         
         return `
         <div class="message-bubble ${isMe ? 'sent' : 'received'}">
-            ${(!isMe && msg.sender_name) ? `<div style="font-size:0.7rem; color:var(--primary-color); font-weight:700; margin-bottom:2px;">${msg.sender_name.split(' ')[0]}</div>` : ''}
             <div class="message-content">${msg.content}</div>
             <div class="message-time">
                 ${time}
-                ${isMe ? '<span class="material-icons" style="font-size:0.9rem; color:#4b5563;">done_all</span>' : ''}
+                ${isMe ? '<span class="material-icons" style="font-size:0.9rem; color:#4b5563; vertical-align:middle;">done_all</span>' : ''}
             </div>
         </div>`;
-    },
-    
-    LoadMoreButton: () => `<button class="load-more-btn" onclick="ChatHandler.loadMoreMessages()">Carregar anteriores</button>`
+    }
 };
