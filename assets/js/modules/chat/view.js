@@ -1,5 +1,7 @@
+import { ChatHandler } from './handler.js';
+
 export const ChatView = {
-    // --- DOCK MODE (Estilo Facebook) ---
+    // --- DOCK MODE ---
     Container: () => `
         <div id="chat-dock-container" style="display:none;">
             <div id="chat-dock" class="chat-dock minimized">
@@ -24,14 +26,19 @@ export const ChatView = {
     UserItem: (user) => {
         // Ícone Especial para o Grupo
         if (user.id === 'STAFF_GROUP') {
+            const preview = user.last_message_preview ? 
+                (user.last_message_preview.length > 25 ? user.last_message_preview.substring(0, 25) + '...' : user.last_message_preview) 
+                : 'Todos os profissionais';
+
             return `
             <div class="chat-user-item" onclick="ChatHandler.openDockWindow('${user.id}', 'Chat Geral')" style="background:#fdf2f8;">
                 <div class="chat-user-avatar" style="background:var(--primary-color); color:white; display:flex; align-items:center; justify-content:center; border-radius:50%;">
                     <span class="material-icons" style="font-size:1.2rem;">groups</span>
+                    <div class="status-indicator" style="background: #10b981;"></div>
                 </div>
                 <div class="chat-user-info">
                     <p class="chat-user-name" style="color:var(--primary-color); font-weight:700;">Chat Geral</p>
-                    <p class="chat-user-role">Todos os profissionais</p>
+                    <p class="chat-user-role">${preview}</p>
                 </div>
             </div>`;
         }
@@ -48,21 +55,24 @@ export const ChatView = {
         const fullName = user.full_name || 'Usuário';
         const initial = fullName.charAt(0).toUpperCase();
 
-        // Avatar fallback seguro
-        // Nota: O schema do banco pode não ter avatar_url, então usamos fallback sempre
-        const avatarHTML = (user.avatar_url && user.avatar_url.length > 5)
-            ? `<img src="${user.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.onerror=null;this.parentNode.innerHTML='${initial}';">` 
-            : `<div style="width:100%;height:100%;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;">${initial}</div>`;
+        // Avatar usando apenas iniciais
+        const avatarHTML = `<div style="width:36px;height:36px;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;">${initial}</div>`;
+
+        // Indicador de status
+        const statusColor = user.is_online ? '#10b981' : '#ccc';
+        const preview = user.last_message_preview ? 
+                (user.last_message_preview.length > 20 ? user.last_message_preview.substring(0, 20) + '...' : user.last_message_preview) 
+                : roleLabel;
 
         return `
         <div class="chat-user-item" onclick="ChatHandler.openDockWindow('${user.id}', '${encodeURIComponent(fullName)}')">
             <div class="chat-user-avatar">
                 ${avatarHTML}
-                <div class="status-indicator"></div>
+                <div class="status-indicator" style="background: ${statusColor};"></div>
             </div>
             <div class="chat-user-info">
                 <p class="chat-user-name">${fullName.split(' ')[0]}</p>
-                <p class="chat-user-role">${roleLabel}</p>
+                <p class="chat-user-role">${preview}</p>
             </div>
             <span class="material-icons" style="font-size:1.2rem; color:#e5e7eb;">chat_bubble_outline</span>
         </div>`;
@@ -94,13 +104,20 @@ export const ChatView = {
         const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
         return `<div class="chat-message-bubble ${isMe ? 'sent' : 'received'}">
-            ${msg.content}
+            ${msg.content} 
             <div class="chat-time">${time}</div>
         </div>`;
     },
 
-    // --- PAGE MODE (MOBILE) ---
+    // --- PAGE MODE ---
     ContactItem: (user, lastMsg = '', isActive = false) => {
+        const statusColor = user.is_online ? '#10b981' : '#ccc';
+        const name = user.full_name || 'Usuário';
+        const role = { 'admin': 'Admin', 'reception': 'Recepção', 'coach': 'Treinadora', 'nutri': 'Nutricionista', 'user': 'Aluna', 'system': 'Sistema' }[user.role] || 'Staff';
+        const initial = name.charAt(0).toUpperCase();
+        
+        const avatarHTML = `<div class="placeholder" style="width:100%;height:100%;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#666;font-weight:700;">${initial}</div>`;
+
         if (user.id === 'STAFF_GROUP') {
             return `
             <div class="chat-list-item ${isActive ? 'active' : ''}" onclick="ChatHandler.loadConversation('${user.id}')" style="background: ${isActive ? '#fce7f3' : '#fff0f7'}">
@@ -111,28 +128,20 @@ export const ChatView = {
                 </div>
                 <div class="chat-list-info">
                     <div class="chat-list-name" style="color:var(--primary-color);">📢 Chat da Equipe</div>
-                    <div class="chat-list-preview">Chat Geral</div>
+                    <div class="chat-list-preview" style="${lastMsg ? 'font-weight:600;color:#333;' : ''}">${lastMsg || 'Chat Geral'}</div>
                 </div>
             </div>`;
         }
-        
-        const name = user.full_name || 'Usuário';
-        const role = { 'admin': 'Admin', 'reception': 'Recepção', 'coach': 'Treinadora', 'nutri': 'Nutricionista', 'user': 'Aluna', 'system': 'Sistema' }[user.role] || 'Staff';
-        const initial = name.charAt(0).toUpperCase();
-        
-        const avatarHTML = (user.avatar_url && user.avatar_url.length > 5)
-            ? `<img src="${user.avatar_url}" onerror="this.onerror=null;this.parentNode.innerHTML='<div class=\\'placeholder\\' style=\\'width:100%;height:100%;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#666;font-weight:700;\\'>${initial}</div>'">` 
-            : `<div class="placeholder" style="width:100%;height:100%;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#666;font-weight:700;">${initial}</div>`;
 
         return `
         <div class="chat-list-item ${isActive ? 'active' : ''}" onclick="ChatHandler.loadConversation('${user.id}')">
             <div class="chat-list-avatar">
                 ${avatarHTML}
-                <div class="status-badge"></div>
+                <div class="status-badge" style="background: ${statusColor};"></div>
             </div>
             <div class="chat-list-info">
                 <div class="chat-list-name">${name.split(' ')[0]} <span style="font-size:0.7em;color:#999;">(${role})</span></div>
-                <div class="chat-list-preview">${lastMsg || 'Toque para conversar'}</div>
+                <div class="chat-list-preview" style="${lastMsg ? 'font-weight:600;color:#333;' : ''}">${lastMsg || 'Toque para conversar'}</div>
             </div>
         </div>`;
     },
@@ -144,9 +153,10 @@ export const ChatView = {
 
         const avatarHTML = isGroup 
             ? `<div style="background:var(--primary-color); color:white; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center;"><span class="material-icons">groups</span></div>`
-            : ((user.avatar_url && user.avatar_url.length > 5) 
-                ? `<img src="${user.avatar_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"> <div style="width:40px;height:40px;background:#eee;border-radius:50%;display:none;align-items:center;justify-content:center;">${initial}</div>` 
-                : `<div style="width:40px;height:40px;background:#eee;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">${initial}</div>`);
+            : `<div style="width:40px;height:40px;background:#eee;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#555;">${initial}</div>`;
+
+        const statusText = isGroup ? 'Todos os membros' : (user.is_online ? 'Online' : 'Offline');
+        const statusColor = user.is_online ? '#10b981' : '#999';
 
         return `
         <div class="chat-main-header">
@@ -155,7 +165,7 @@ export const ChatView = {
                 ${avatarHTML}
                 <div>
                     <div class="chat-header-name">${isGroup ? 'Chat da Equipe' : fullName}</div>
-                    <div class="chat-header-status">${isGroup ? 'Todos os membros' : 'Online'}</div>
+                    <div class="chat-header-status" style="color:${isGroup ? '#666' : statusColor}">${statusText}</div>
                 </div>
             </div>
         </div>

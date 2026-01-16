@@ -86,9 +86,10 @@ export const Services = {
     // =========================================================================
 
     async getPosts(currentUserId) {
+        // Removido avatar_url da query
         let { data, error } = await supabase
             .from('fitgran_posts')
-            .select(`*, profiles:user_id (full_name, avatar_url)`)
+            .select(`*, profiles:user_id (full_name)`)
             .order('created_at', { ascending: false });
         
         if (error || !data) return [];
@@ -129,19 +130,21 @@ export const Services = {
     },
 
     async getComments(postId) {
+        // Removido avatar_url da query
         const { data } = await supabase
             .from('fitgran_comments')
-            .select(`*, profiles:user_id (full_name, avatar_url)`)
+            .select(`*, profiles:user_id (full_name)`)
             .eq('post_id', postId)
             .order('created_at', { ascending: true });
         return data || [];
     },
 
     async addComment(postId, userId, content) {
+        // Removido avatar_url da query
         const { data, error } = await supabase
             .from('fitgran_comments')
             .insert([{ post_id: postId, user_id: userId, content }])
-            .select(`*, profiles:user_id (full_name, avatar_url)`)
+            .select(`*, profiles:user_id (full_name)`)
             .single();
         return { data, error };
     },
@@ -278,9 +281,7 @@ export const Services = {
         return { error };
     },
 
-    // --- CLIENTES & AVALIAÇÕES (NOVO) ---
     async getClients() {
-        // Busca perfis que são 'user'
         const { data, error } = await supabase
             .from('profiles')
             .select('*')
@@ -289,11 +290,7 @@ export const Services = {
         return error ? [] : data;
     },
     
-    // Criação de conta manual (sem login automático no front)
     async createClientAccount(email, password, fullName, unit) {
-        // Usa a API de Admin do supabase (se disponível) ou signUp normal
-        // Como estamos no client-side, o signUp normal loga o usuário.
-        // O handler deve tratar o logout subsequente.
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -318,12 +315,11 @@ export const Services = {
     },
 
     async getAssessments(userId) {
-        // Busca histórico de avaliações (peso, medidas)
         const { data, error } = await supabase
             .from('assessments')
             .select('*')
             .eq('user_id', userId)
-            .order('created_at', { ascending: false }); // Mais recente primeiro
+            .order('created_at', { ascending: false });
         
         if (error) {
             console.error('Erro ao buscar avaliações:', error);
@@ -333,7 +329,6 @@ export const Services = {
     },
 
     async createAssessment(payload) {
-        // payload: { user_id, weight, height, measurements: { waist, hip, etc }, notes }
         const { data, error } = await supabase
             .from('assessments')
             .insert([payload])
@@ -343,49 +338,45 @@ export const Services = {
     },
 
 
+     // =========================================================================
+    // MÓDULO 5: CHAT (ATUALIZADO)
     // =========================================================================
-    // MÓDULO 5: CHAT & COMUNICAÇÃO
-    // =========================================================================
-
     async getChatContacts() {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('id, full_name, role, unit')
-            .order('full_name');
+        const { data, error } = await supabase.from('profiles').select('id, full_name, role, unit').order('full_name');
         return error ? [] : data;
     },
-
-    async getChatMessages(senderId, recipientId, limit = 20, offset = 0) {
-        let query = supabase
+    async getRecentMessagesSummary(currentUserId) {
+        // Busca 100 ultimas mensagens onde sou remetente, destinatario ou destinatario é nulo (grupo)
+        const { data, error } = await supabase
             .from('messages')
-            .select('*')
+            .select('sender_id, recipient_id, content, created_at')
+            .or(`sender_id.eq.${currentUserId},recipient_id.eq.${currentUserId},recipient_id.is.null`) 
             .order('created_at', { ascending: false })
-            .range(offset, offset + limit - 1);
-
+            .limit(100);
+        if (error) return [];
+        return data;
+    },
+    async getChatMessages(senderId, recipientId, limit = 20, offset = 0) {
+        let query = supabase.from('messages').select('*').order('created_at', { ascending: false }).range(offset, offset + limit - 1);
         if (recipientId === 'STAFF_GROUP') {
             query = query.is('recipient_id', null);
         } else {
             query = query.or(`and(sender_id.eq.${senderId},recipient_id.eq.${recipientId}),and(sender_id.eq.${recipientId},recipient_id.eq.${senderId})`);
         }
-
         const { data, error } = await query;
         return error ? [] : data.reverse();
     },
-
     async sendMessage(senderId, recipientId, content) {
         const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', senderId).single();
-        
         const payload = {
             sender_id: senderId,
             content,
             sender_name: profile?.full_name || 'Usuário',
             recipient_id: (recipientId === 'STAFF_GROUP') ? null : recipientId
         };
-
         const { data, error } = await supabase.from('messages').insert([payload]).select().single();
         return { data, error };
     },
-
 
     // =========================================================================
     // MÓDULO 6: GESTÃO DE TREINOS
