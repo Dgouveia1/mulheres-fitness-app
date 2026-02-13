@@ -9,20 +9,20 @@ export const AdminHandlers = {
     currentView: 'day',
     currentFilter: 'all',
     videoCategories: [],
-    
+
     // Cache de dados
     activeClientData: null,
     clientsCache: [], // Cache para busca local
 
     init(path, user) {
         window.handler = this;
-        
+
         if (path === '/admin') this.loadDashboard();
         if (path === '/admin/agenda') this.loadAgenda();
         if (path === '/admin/clientes') this.loadClients();
         if (path === '/admin/nutricao') this.loadDiet();
         if (path === '/admin/fitflix') this.loadFitFlixManager();
-        
+
         if (path === '/admin/treinos') {
             if (AdminWorkoutHandler && typeof AdminWorkoutHandler.init === 'function') {
                 AdminWorkoutHandler.init();
@@ -47,11 +47,11 @@ export const AdminHandlers = {
                 </div>
             `).join('') : '<p>Sem agendamentos hoje.</p>';
         }
-        
+
         // Count clientes
         const clients = await Services.getClients();
         const countCli = document.getElementById('dash-clients-count');
-        if(countCli) countCli.innerText = clients.length;
+        if (countCli) countCli.innerText = clients.length;
     },
 
     // =========================================================================
@@ -61,12 +61,12 @@ export const AdminHandlers = {
     async loadClients() {
         const list = document.getElementById('clients-table-body');
         if (!list) return;
-        
+
         list.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px;">Carregando clientes...</td></tr>';
-        
+
         // Carrega e guarda no cache
         this.clientsCache = await Services.getClients();
-        
+
         this.renderClientsList(this.clientsCache);
     },
 
@@ -104,8 +104,8 @@ export const AdminHandlers = {
             return;
         }
         const lower = term.toLowerCase();
-        const filtered = this.clientsCache.filter(c => 
-            c.full_name.toLowerCase().includes(lower) || 
+        const filtered = this.clientsCache.filter(c =>
+            c.full_name.toLowerCase().includes(lower) ||
             (c.email && c.email.toLowerCase().includes(lower))
         );
         this.renderClientsList(filtered);
@@ -120,7 +120,7 @@ export const AdminHandlers = {
         e.preventDefault();
         const form = e.target;
         const btn = form.querySelector('button[type="submit"]');
-        
+
         const fullName = form.full_name.value;
         const email = form.email.value;
         const password = form.password.value;
@@ -138,10 +138,10 @@ export const AdminHandlers = {
 
             Toast.success('Cliente criado com sucesso!');
             document.getElementById('modal-create-client').classList.remove('active');
-            
+
             // Recarrega a lista
             await this.loadClients();
-            
+
             // Verifica se a sessão mudou (comportamento padrão do Supabase Client)
             const { data } = await auth.getSession();
             if (data.session && data.session.user.email === email) {
@@ -180,9 +180,9 @@ export const AdminHandlers = {
     async loadClientAssessments(userId) {
         const historyBody = document.getElementById('history-table-body');
         if (!historyBody) return;
-        
+
         historyBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Carregando...</td></tr>';
-        
+
         const assessments = await Services.getAssessments(userId);
         this.activeClientData = assessments; // Cache
 
@@ -190,10 +190,10 @@ export const AdminHandlers = {
         if (!assessments || assessments.length === 0) {
             historyBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#999;">Nenhuma avaliação registrada.</td></tr>';
             // Zera stats
-            if(document.getElementById('val-imc')) document.getElementById('val-imc').innerText = '--';
-            if(document.getElementById('val-weight')) document.getElementById('val-weight').innerText = '-- kg';
-            if(document.getElementById('val-height')) document.getElementById('val-height').innerText = '-- m';
-            if(document.getElementById('weight-chart-admin')) document.getElementById('weight-chart-admin').innerHTML = '<p style="color:#999; text-align:center; padding:30px;">Sem dados para gráfico.</p>';
+            if (document.getElementById('val-imc')) document.getElementById('val-imc').innerText = '--';
+            if (document.getElementById('val-weight')) document.getElementById('val-weight').innerText = '-- kg';
+            if (document.getElementById('val-height')) document.getElementById('val-height').innerText = '-- m';
+            if (document.getElementById('weight-chart-admin')) document.getElementById('weight-chart-admin').innerHTML = '<p style="color:#999; text-align:center; padding:30px;">Sem dados para gráfico.</p>';
             return;
         }
 
@@ -228,14 +228,14 @@ export const AdminHandlers = {
     switchClientTab(tabName) {
         document.querySelectorAll('.tab-link').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.client-tab-content').forEach(c => c.style.display = 'none');
-        
+
         // Ativa o botão clicado
         const btnIndex = tabName === 'evolution' ? 0 : 1;
         const tabs = document.querySelectorAll('.tab-link');
         if (tabs[btnIndex]) tabs[btnIndex].classList.add('active');
-        
+
         const contentDiv = document.getElementById(`tab-${tabName}`);
-        if(contentDiv) contentDiv.style.display = 'block';
+        if (contentDiv) contentDiv.style.display = 'block';
     },
 
     async saveAssessment(e) {
@@ -270,7 +270,7 @@ export const AdminHandlers = {
             user_id: userId,
             weight: weight,
             height: height,
-            measurements: measurements, 
+            measurements: measurements,
             notes: form.notes.value
         };
 
@@ -312,8 +312,8 @@ export const AdminHandlers = {
         const barsHTML = chartData.map(d => {
             // Normaliza altura da barra (0% a 100% dentro do range min-max visual)
             const heightPercent = ((d.weight - minW) / range) * 100;
-            const date = new Date(d.created_at).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
-            
+            const date = new Date(d.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
             return `
                 <div class="chart-bar-col">
                     <span class="chart-val">${d.weight}</span>
@@ -342,7 +342,7 @@ export const AdminHandlers = {
         this.videoCategories = await Services.getFitFlixCategories();
         const selects = document.querySelectorAll('select[name="category"]');
         selects.forEach(select => {
-            select.innerHTML = this.videoCategories.length 
+            select.innerHTML = this.videoCategories.length
                 ? this.videoCategories.map(c => `<option value="${c.name}">${c.name}</option>`).join('')
                 : '<option value="" disabled>Crie uma categoria primeiro</option>';
         });
@@ -430,7 +430,7 @@ export const AdminHandlers = {
         document.getElementById('cancel-edit-cat').style.display = 'none';
     },
     async deleteCategory(id) {
-        if(confirm('Tem certeza? Isso não apagará os vídeos, mas pode deixar eles sem categoria.')) {
+        if (confirm('Tem certeza? Isso não apagará os vídeos, mas pode deixar eles sem categoria.')) {
             await Services.deleteFitFlixCategory(id);
             this.loadCategories();
         }
@@ -520,10 +520,15 @@ export const AdminHandlers = {
             }
         }
     },
+    agendaSearchTerm: '', // Novo estado para busca
+
     async loadAgenda() { this.renderCalendarHeader(); await this.renderCalendarBody(); },
+
     setFilter(filter) { this.currentFilter = filter; document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter)); this.renderCalendarBody(); },
+
     setView(view) { this.currentView = view; document.querySelectorAll('.view-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.view === view)); this.loadAgenda(); },
-    changeDate(offset) { 
+
+    changeDate(offset) {
         const d = new Date(this.currentDate);
         if (this.currentView === 'day') d.setDate(d.getDate() + offset);
         else if (this.currentView === 'week') d.setDate(d.getDate() + (offset * 7));
@@ -531,10 +536,24 @@ export const AdminHandlers = {
         this.currentDate = d;
         this.loadAgenda();
     },
+
     selectDateFromMonth(dateStr) { const [year, month, day] = dateStr.split('-').map(Number); this.currentDate = new Date(year, month - 1, day); this.setView('day'); },
+
+    handleAgendaSearch(term) {
+        this.agendaSearchTerm = term.trim();
+        this.renderCalendarBody();
+    },
+
     renderCalendarHeader() {
         const dateEl = document.getElementById('cal-current-date');
         if (!dateEl) return;
+
+        // Se tiver busca, muda o título
+        if (this.agendaSearchTerm) {
+            dateEl.innerText = `Resultados para: "${this.agendaSearchTerm}"`;
+            return;
+        }
+
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         if (this.currentView === 'day') {
             dateEl.innerText = this.currentDate.toLocaleDateString('pt-BR', { weekday: 'long', ...options });
@@ -548,10 +567,41 @@ export const AdminHandlers = {
             dateEl.innerText = monthName.charAt(0).toUpperCase() + monthName.slice(1);
         }
     },
+
     async renderCalendarBody() {
         const grid = document.getElementById('calendar-grid');
         if (!grid) return;
         grid.innerHTML = '<div class="loader-spinner" style="margin:50px auto"></div>';
+
+        // MODO BUSCA
+        if (this.agendaSearchTerm) {
+            const searchResults = await Services.searchAppointments(this.agendaSearchTerm);
+
+            if (searchResults.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; padding:50px; color:#666;">Nenhum agendamento encontrado.</p>';
+                return;
+            }
+
+            grid.innerHTML = `
+                <div class="search-results-list" style="padding: 20px;">
+                    ${searchResults.map(app => {
+                const date = new Date(app.date).toLocaleDateString('pt-BR');
+                return `
+                        <div class="card" style="margin-bottom: 10px; cursor: pointer; display:flex; justify-content:space-between; align-items:center;" onclick="handler.openAppointment(${app.id})">
+                             <div>
+                                <strong style="display:block; font-size:1.1rem;">${app.client_name}</strong>
+                                <span style="color:#666;">${date} às ${app.time.slice(0, 5)}</span>
+                                <span class="badge" style="margin-left:10px; font-size:0.8rem;">${app.type}</span>
+                             </div>
+                             <span class="material-icons" style="color:#ccc;">chevron_right</span>
+                        </div>`;
+            }).join('')}
+                </div>
+            `;
+            return;
+        }
+
+        // MODO CALENDÁRIO NORMAL
         let startDate, endDate;
         if (this.currentView === 'day') {
             const dateStr = this.currentDate.toISOString().split('T')[0];
@@ -571,8 +621,8 @@ export const AdminHandlers = {
             endDate = lastDay.toISOString().split('T')[0];
         }
         const allAppointments = await Services.getAppointments(startDate, endDate);
-        const filteredApps = this.currentFilter === 'all' 
-            ? allAppointments 
+        const filteredApps = this.currentFilter === 'all'
+            ? allAppointments
             : allAppointments.filter(a => a.type === this.currentFilter);
         if (this.currentView === 'day') {
             this.renderDayGrid(grid, filteredApps);
@@ -586,14 +636,14 @@ export const AdminHandlers = {
         const events = appointments.map(app => {
             const [h, m] = app.time.split(':').map(Number);
             const startMin = h * 60 + m;
-            let durationMin = 60; 
+            let durationMin = 60;
             if (app.duration) {
-                 if (typeof app.duration === 'string' && app.duration.includes(':')) {
-                     const [dh, dm] = app.duration.split(':').map(Number);
-                     durationMin = (dh * 60) + dm;
-                 } else if (typeof app.duration === 'number') {
-                     durationMin = app.duration;
-                 }
+                if (typeof app.duration === 'string' && app.duration.includes(':')) {
+                    const [dh, dm] = app.duration.split(':').map(Number);
+                    durationMin = (dh * 60) + dm;
+                } else if (typeof app.duration === 'number') {
+                    durationMin = app.duration;
+                }
             }
             return {
                 ...app,
@@ -629,9 +679,9 @@ export const AdminHandlers = {
     },
     renderDayGrid(container, appointments) {
         const START_HOUR = 6;
-        const END_HOUR = 22; 
-        const PIXELS_PER_HOUR = 60; 
-        let html = '<div class="day-view-container" style="height: 1020px;">'; 
+        const END_HOUR = 22;
+        const PIXELS_PER_HOUR = 60;
+        let html = '<div class="day-view-container" style="height: 1020px;">';
         for (let h = START_HOUR; h <= END_HOUR; h++) {
             const top = (h - START_HOUR) * PIXELS_PER_HOUR;
             html += `
@@ -647,7 +697,7 @@ export const AdminHandlers = {
                 <div class="appt-card type-${evt.type} status-${evt.status}" 
                      style="top: ${top}px; height: ${height}px; left: calc(60px + ${evt.left}% - 10px); width: calc(${evt.width}% - 10px);"
                      onclick="handler.openAppointment(${evt.id})">
-                    <div class="appt-time">${evt.time.slice(0,5)}</div>
+                    <div class="appt-time">${evt.time.slice(0, 5)}</div>
                     <strong>${evt.client_name}</strong>
                     <div class="appt-type">${evt.type === 'fisica' ? 'Avaliação' : (evt.type === 'nutri' ? 'Nutri' : 'Personal')}</div>
                 </div>
@@ -660,10 +710,10 @@ export const AdminHandlers = {
         const startOfWeek = new Date(startDateStr + 'T00:00:00');
         const START_HOUR = 6;
         const END_HOUR = 22;
-        const PIXELS_PER_HOUR = 50; 
+        const PIXELS_PER_HOUR = 50;
         let header = '<div class="cal-header-row" style="padding-left: 50px;">';
         const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        for(let i=0; i<7; i++) {
+        for (let i = 0; i < 7; i++) {
             let d = new Date(startOfWeek);
             d.setDate(d.getDate() + i);
             let isToday = new Date().toDateString() === d.toDateString();
@@ -677,31 +727,31 @@ export const AdminHandlers = {
         }
         body += '</div>';
         body += '<div class="week-cols-container">';
-        for(let i=0; i<7; i++) {
+        for (let i = 0; i < 7; i++) {
             let d = new Date(startOfWeek);
             d.setDate(d.getDate() + i);
             const dateStr = d.toISOString().split('T')[0];
             const dayApps = appointments.filter(a => a.date === dateStr);
             const processed = this.processOverlaps(dayApps);
             body += `<div class="week-col">`;
-                for (let h = START_HOUR; h <= END_HOUR; h++) {
-                     body += `<div class="week-cell-grid" style="height:${PIXELS_PER_HOUR}px; border-bottom:1px solid #f5f5f5;"></div>`;
-                }
-                processed.forEach(evt => {
-                    const top = (evt.startMin - (START_HOUR * 60)) * (PIXELS_PER_HOUR / 60);
-                    const height = evt.durationMin * (PIXELS_PER_HOUR / 60);
-                    body += `
+            for (let h = START_HOUR; h <= END_HOUR; h++) {
+                body += `<div class="week-cell-grid" style="height:${PIXELS_PER_HOUR}px; border-bottom:1px solid #f5f5f5;"></div>`;
+            }
+            processed.forEach(evt => {
+                const top = (evt.startMin - (START_HOUR * 60)) * (PIXELS_PER_HOUR / 60);
+                const height = evt.durationMin * (PIXELS_PER_HOUR / 60);
+                body += `
                         <div class="appt-card compact type-${evt.type}" 
                             style="top: ${top}px; height: ${height}px; left: ${evt.left}%; width: ${evt.width}%;"
                             onclick="handler.openAppointment(${evt.id})">
-                            <small>${evt.time.slice(0,5)}</small>
+                            <small>${evt.time.slice(0, 5)}</small>
                             <strong>${evt.client_name.split(' ')[0]}</strong>
                         </div>
                     `;
-                });
+            });
             body += `</div>`;
         }
-        body += '</div></div>'; 
+        body += '</div></div>';
         container.innerHTML = header + body;
     },
     renderMonthGrid(container, appointments) {
@@ -710,7 +760,7 @@ export const AdminHandlers = {
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
         const daysInMonth = lastDay.getDate();
-        const startingDay = firstDay.getDay(); 
+        const startingDay = firstDay.getDay();
         let html = '<div class="month-header-row">';
         const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
         days.forEach(d => html += `<div class="month-header-cell">${d}</div>`);
@@ -720,7 +770,7 @@ export const AdminHandlers = {
             html += '<div class="month-cell empty"></div>';
         }
         for (let day = 1; day <= daysInMonth; day++) {
-            const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const dayApps = appointments.filter(a => a.date === dateStr);
             const isToday = (new Date().toDateString() === new Date(year, month, day).toDateString());
             html += `<div class="month-cell ${isToday ? 'today' : ''}" onclick="handler.selectDateFromMonth('${dateStr}')">
@@ -728,7 +778,7 @@ export const AdminHandlers = {
                 <div class="month-events-list">
                     ${dayApps.slice(0, 3).map(app => `
                         <div class="month-event-dot type-${app.type}" title="${app.time} - ${app.client_name}">
-                            ${app.time.slice(0,5)} ${app.client_name.split(' ')[0]}
+                            ${app.time.slice(0, 5)} ${app.client_name.split(' ')[0]}
                         </div>
                     `).join('')}
                     ${dayApps.length > 3 ? `<div class="month-more">+${dayApps.length - 3}</div>` : ''}
@@ -754,16 +804,16 @@ export const AdminHandlers = {
             if (data) {
                 document.getElementById('app-id').value = data.id;
                 document.getElementById('app-client').value = data.client_name;
-                document.getElementById('app-phone').value = data.telefone || ''; 
+                document.getElementById('app-phone').value = data.telefone || '';
                 document.getElementById('app-date').value = data.date;
-                document.getElementById('app-time').value = data.time.slice(0,5);
+                document.getElementById('app-time').value = data.time.slice(0, 5);
                 document.getElementById('app-type').value = data.type;
                 document.getElementById('app-status').value = data.status || 'pending';
                 document.getElementById('app-unit').value = data.unit;
                 let dur = 60;
-                if(data.duration && typeof data.duration === 'string') {
+                if (data.duration && typeof data.duration === 'string') {
                     const parts = data.duration.split(':');
-                    dur = parseInt(parts[0])*60 + parseInt(parts[1]);
+                    dur = parseInt(parts[0]) * 60 + parseInt(parts[1]);
                 }
                 document.getElementById('app-duration').value = dur;
                 if (delBtn) delBtn.style.display = 'block';
@@ -783,15 +833,15 @@ export const AdminHandlers = {
         const date = formData.get('date');
         const time = formData.get('time');
         const type = formData.get('type');
-        const phone = formData.get('telefone'); 
+        const phone = formData.get('telefone');
         const clientName = formData.get('client_name');
         const durationMin = parseInt(formData.get('duration'));
         const durHours = Math.floor(durationMin / 60);
         const durMinsRem = durationMin % 60;
-        const durationStr = `${durHours.toString().padStart(2,'0')}:${durMinsRem.toString().padStart(2,'0')}:00`;
+        const durationStr = `${durHours.toString().padStart(2, '0')}:${durMinsRem.toString().padStart(2, '0')}:00`;
         const payload = {
             client_name: clientName,
-            telefone: phone, 
+            telefone: phone,
             date: date,
             time: time,
             type: type,
@@ -819,7 +869,7 @@ export const AdminHandlers = {
             document.getElementById('modal-appointment').classList.remove('active');
             this.loadAgenda();
             if (phone) {
-                const cleanPhone = phone.replace(/\D/g, ''); 
+                const cleanPhone = phone.replace(/\D/g, '');
                 if (cleanPhone.length >= 10) {
                     const dataFormatada = new Date(date + 'T' + time).toLocaleDateString('pt-BR');
                     const tipoFormatado = type === 'fisica' ? 'Avaliação Física' : (type === 'nutri' ? 'Nutricionista' : 'Personal');
@@ -850,5 +900,5 @@ export const AdminHandlers = {
             }
         }
     },
-    async loadDiet() {}
+    async loadDiet() { }
 };

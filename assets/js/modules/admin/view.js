@@ -131,7 +131,15 @@ export const AdminView = {
 
     Agenda: () => `
         <div class="admin-page-header row-between">
-            <h1>Agenda Inteligente</h1>
+            <div>
+                <h1>Agenda Inteligente</h1>
+                <div style="margin-top: 10px; position: relative; max-width: 300px;">
+                    <input type="text" placeholder="🔍 Buscar aluna..." 
+                        onkeyup="handler.handleAgendaSearch(this.value)"
+                        style="width: 100%; padding: 8px 12px; padding-left: 35px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.9rem;">
+                    <span class="material-icons" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #888; font-size: 18px;">search</span>
+                </div>
+            </div>
             <button class="btn-admin-primary" id="btn-new-appointment" onclick="handler.openAppointment(null)">+ Novo Agendamento</button>
         </div>
         <div class="calendar-wrapper">

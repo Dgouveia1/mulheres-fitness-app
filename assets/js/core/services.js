@@ -5,7 +5,7 @@ export const Services = {
     // =========================================================================
     // MÓDULO 1: FITFLIX (VÍDEOS)
     // =========================================================================
-    
+
     async getVideos() {
         const { data, error } = await supabase
             .from('fitflix_videos')
@@ -91,7 +91,7 @@ export const Services = {
             .from('fitgran_posts')
             .select(`*, profiles:user_id (full_name)`)
             .order('created_at', { ascending: false });
-        
+
         if (error || !data) return [];
 
         if (currentUserId) {
@@ -99,7 +99,7 @@ export const Services = {
                 .from('fitgran_likes')
                 .select('post_id')
                 .eq('user_id', currentUserId);
-            
+
             const likedSet = new Set(likes?.map(l => l.post_id));
             data = data.map(p => ({ ...p, is_liked: likedSet.has(p.id) }));
         }
@@ -124,7 +124,7 @@ export const Services = {
             .from('fitgran_likes')
             .select('*', { count: 'exact', head: true })
             .eq('post_id', postId);
-        
+
         await supabase.from('fitgran_posts').update({ likes_count: count }).eq('id', postId);
         return { success: true, newCount: count };
     },
@@ -152,7 +152,7 @@ export const Services = {
     async uploadPostImage(file, userId) {
         const cleanName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9.]/g, "_");
         const filePath = `${userId}/${Date.now()}_${cleanName}`;
-        
+
         const { error } = await supabase.storage.from('fitflix_post').upload(filePath, file);
         if (error) return null;
 
@@ -188,7 +188,7 @@ export const Services = {
 
         if (data) {
             data.forEach(w => {
-                if(w.items) w.items.sort((a,b) => a.order_index - b.order_index);
+                if (w.items) w.items.sort((a, b) => a.order_index - b.order_index);
             });
         }
         return data || [];
@@ -206,15 +206,15 @@ export const Services = {
             .eq('user_id', userId)
             .order('performed_at', { ascending: false });
 
-        if (!logs) return { totalWorkouts: 0, streak: 0, weeklyFreq: [0,0,0,0,0,0,0], totalTonnage: 0 };
+        if (!logs) return { totalWorkouts: 0, streak: 0, weeklyFreq: [0, 0, 0, 0, 0, 0, 0], totalTonnage: 0 };
 
         const uniqueDays = new Set(logs.map(l => l.performed_at.split('T')[0]));
-        
+
         const weeklyFreq = [0, 0, 0, 0, 0, 0, 0];
         const now = new Date();
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
-        startOfWeek.setHours(0,0,0,0);
+        startOfWeek.setHours(0, 0, 0, 0);
 
         logs.forEach(l => {
             const d = new Date(l.performed_at);
@@ -223,7 +223,7 @@ export const Services = {
 
         return {
             totalWorkouts: uniqueDays.size,
-            streak: uniqueDays.size > 0 ? 1 : 0, 
+            streak: uniqueDays.size > 0 ? 1 : 0,
             weeklyFreq
         };
     },
@@ -251,6 +251,17 @@ export const Services = {
         return error ? [] : data;
     },
 
+    async searchAppointments(term) {
+        const { data, error } = await supabase
+            .from('appointments')
+            .select('*')
+            .ilike('client_name', `%${term}%`)
+            .order('date', { ascending: false }) // Mais recentes primeiro
+            .order('time', { ascending: true })
+            .limit(50);
+        return error ? [] : data;
+    },
+
     async checkAppointmentAvailability(date, time, type, excludeId = null) {
         let query = supabase
             .from('appointments')
@@ -259,9 +270,9 @@ export const Services = {
             .eq('time', time)
             .eq('type', type)
             .neq('status', 'cancelled');
-        
+
         if (excludeId) query = query.neq('id', excludeId);
-        
+
         const { count, error } = await query;
         return (error) ? false : (count === 0);
     },
@@ -289,7 +300,7 @@ export const Services = {
             .order('full_name');
         return error ? [] : data;
     },
-    
+
     async createClientAccount(email, password, fullName, unit) {
         const { data, error } = await supabase.auth.signUp({
             email,
@@ -320,7 +331,7 @@ export const Services = {
             .select('*')
             .eq('user_id', userId)
             .order('created_at', { ascending: false });
-        
+
         if (error) {
             console.error('Erro ao buscar avaliações:', error);
             return [];
@@ -338,7 +349,7 @@ export const Services = {
     },
 
 
-     // =========================================================================
+    // =========================================================================
     // MÓDULO 5: CHAT (ATUALIZADO)
     // =========================================================================
     async getChatContacts() {
@@ -350,7 +361,7 @@ export const Services = {
         const { data, error } = await supabase
             .from('messages')
             .select('sender_id, recipient_id, content, created_at')
-            .or(`sender_id.eq.${currentUserId},recipient_id.eq.${currentUserId},recipient_id.is.null`) 
+            .or(`sender_id.eq.${currentUserId},recipient_id.eq.${currentUserId},recipient_id.is.null`)
             .order('created_at', { ascending: false })
             .limit(100);
         if (error) return [];
@@ -439,9 +450,9 @@ export const Services = {
             `)
             .eq('id', workoutId)
             .single();
-        
+
         if (data && data.items) {
-            data.items.sort((a,b) => a.order_index - b.order_index);
+            data.items.sort((a, b) => a.order_index - b.order_index);
         }
         return { data, error };
     },
@@ -484,7 +495,7 @@ export const Services = {
         return { error };
     },
 
-     // =========================================================================
+    // =========================================================================
     // MÓDULO 7: NUTRIÇÃO
     // =========================================================================
 
@@ -497,7 +508,7 @@ export const Services = {
             .order('created_at', { ascending: false })
             .limit(1)
             .single();
-        
+
         if (error || !diet) return null;
 
         const { data: meals } = await supabase
@@ -508,7 +519,7 @@ export const Services = {
 
         if (meals) {
             meals.forEach(meal => {
-                if (meal.foods) meal.foods.sort((a,b) => a.order_index - b.order_index);
+                if (meal.foods) meal.foods.sort((a, b) => a.order_index - b.order_index);
             });
         }
 
@@ -530,7 +541,7 @@ export const Services = {
             .select('*')
             .eq('id', dietId)
             .single();
-        
+
         if (error || !diet) return null;
 
         const { data: meals } = await supabase
@@ -541,7 +552,7 @@ export const Services = {
 
         if (meals) {
             meals.forEach(meal => {
-                if (meal.foods) meal.foods.sort((a,b) => a.order_index - b.order_index);
+                if (meal.foods) meal.foods.sort((a, b) => a.order_index - b.order_index);
             });
         }
 
@@ -559,7 +570,7 @@ export const Services = {
 
         for (let i = 0; i < mealsData.length; i++) {
             const meal = mealsData[i];
-            
+
             const { data: newMeal, error: mError } = await supabase
                 .from('diet_meals')
                 .insert([{
@@ -570,8 +581,8 @@ export const Services = {
                 }])
                 .select()
                 .single();
-            
-            if (mError) continue; 
+
+            if (mError) continue;
 
             if (meal.foods && meal.foods.length > 0) {
                 const foodsPayload = meal.foods.map((f, idx) => ({
