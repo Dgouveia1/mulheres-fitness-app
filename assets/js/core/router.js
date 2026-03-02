@@ -131,17 +131,18 @@ export const router = {
                     return;
                 }
 
-                // 2. Realiza a Assinatura Automaticamente
-                btn.innerText = 'Gerando Pagamento...';
+                // 2. Realiza a Assinatura Automaticamente (EM STAND BY)
+                btn.innerText = 'Redirecionando...';
                 try {
                     // Login automático para ter o token
                     await auth.signIn(email, password);
 
+                    // Lógica de pagamento em stand by
+                    /*
                     const customerData = { full_name: fullName, email, cpf, phone };
                     const subResult = await AsaasService.subscribe(1, customerData);
 
                     if (subResult.success) {
-                        // Salva dados do pagamento para exibir na tela de pagamento
                         localStorage.setItem('pending_payment', JSON.stringify({
                             subscriptionId: subResult.subscriptionId,
                             paymentData: subResult.paymentData,
@@ -153,10 +154,14 @@ export const router = {
                     } else {
                         throw new Error('Falha ao gerar assinatura.');
                     }
+                    */
+
+                    Toast.success('Conta criada com sucesso!');
+                    this.navigate('/');
 
                 } catch (subError) {
                     console.error(subError);
-                    Toast.error('Conta criada, mas erro ao gerar pagamento. Faça login novamente.');
+                    Toast.error('Erro ao finalizar o cadastro da conta. Faça login novamente.');
                     this.navigate('/login');
                 }
             }
@@ -219,12 +224,13 @@ export const router = {
             return;
         }
 
-        // GUARD DE PAGAMENTO
+        // GUARD DE PAGAMENTO (EM STAND BY)
         if (user && !path.startsWith('/admin')) { // Ignora admins
             const role = user.profile?.role || 'user';
 
             // Se for usuário comum e não estiver na tela de pagamento ou login/register
             if (role === 'user' && path !== '/payment' && path !== '/login' && path !== '/register') {
+                /*
                 // 1. Busca o ID do cliente Asaas localmente
                 const { data: customer } = await supabase
                     .from('asaas_customers')
@@ -251,6 +257,7 @@ export const router = {
                     this.navigate('/payment');
                     return;
                 }
+                */
             }
         }
 

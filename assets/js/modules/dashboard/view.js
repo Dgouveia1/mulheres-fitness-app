@@ -75,7 +75,7 @@ export const DashboardView = {
                 <div class="text"><h3>Comunidade VIP</h3><p>Ver novidades</p></div>
             </div>
             
-            <div class="card action-card" id="btn-subscribe" style="margin-top: 8px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white;">
+            <div class="card action-card" id="btn-subscribe" style="display: none; margin-top: 8px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white;">
                 <span class="icon">👑</span>
                 <div class="text"><h3 style="color: white;">Seja Premium</h3><p style="color: rgba(255,255,255,0.9);">Assinar Agora</p></div>
             </div>
