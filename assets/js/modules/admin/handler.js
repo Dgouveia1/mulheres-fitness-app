@@ -585,7 +585,8 @@ export const AdminHandlers = {
             grid.innerHTML = `
                 <div class="search-results-list" style="padding: 20px;">
                     ${searchResults.map(app => {
-                const date = new Date(app.date).toLocaleDateString('pt-BR');
+                const [y, m, d] = app.date.split('-');
+                const date = `${d}/${m}/${y}`;
                 return `
                         <div class="card" style="margin-bottom: 10px; cursor: pointer; display:flex; justify-content:space-between; align-items:center;" onclick="handler.openAppointment(${app.id})">
                              <div>
