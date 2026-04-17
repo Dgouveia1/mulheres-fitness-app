@@ -5,7 +5,7 @@
 // Por favor, substitua as constantes abaixo pelos valores do seu Dashboard (Settings > API).
 
 const SUPABASE_URL = 'https://aqiwolmbidkjrnkxvurf.supabase.co'; // <--- COPIE O 'PROJECT URL' AQUI
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxaXdvbG1iaWRranJua3h2dXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzA0MDEsImV4cCI6MjA4MDA0NjQwMX0.iOZ6yYTZe0STns11cXRLwouCoy5qGSJrt1Zdl6vTwDw'; // <--- COPIE A CHAVE 'ANON' AQUI
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxaXdvbG1iaWRranJua3h2dXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzEwNTIsImV4cCI6MjA5MTc5MTA1Mn0.jMv1XaZPNv4c04R9OravVaftphT8WOIrkY9Lcf8Me08'; // <--- COPIE A CHAVE 'ANON' AQUI
 
 // Inicializa o cliente apenas se as chaves estiverem definidas
 let supabase;
