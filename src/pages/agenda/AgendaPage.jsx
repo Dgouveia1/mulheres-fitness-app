@@ -1,7 +1,19 @@
 import { useEffect, useState } from 'react'
-import { getAppointments, createAppointment, updateAppointment, deleteAppointment, searchAppointments } from '@/services/api'
+import { useAuth } from '@/contexts/AuthContext'
+import { getAppointments, createAppointment, updateAppointment, deleteAppointment, searchAppointments, checkAppointmentAvailability } from '@/services/api'
 import { Modal } from '@/components/ui/Modal'
 import { useToast } from '@/components/ui/Toast'
+
+// Monta o link de confirmação no WhatsApp (wa.me) com mensagem pronta.
+function waLink(appt) {
+  const digits = (appt?.telefone || '').replace(/\D/g, '')
+  if (!digits) return null
+  // número nacional (10-11 dígitos) recebe DDI 55; 12-13 dígitos já vêm com DDI
+  const num = digits.length <= 11 ? `55${digits}` : digits
+  const dataBR = appt.date ? appt.date.split('-').reverse().join('/') : ''
+  const msg = `Olá, ${appt.client_name}! Confirmando seu agendamento de ${appt.type} no dia ${dataBR} às ${(appt.time || '').slice(0, 5)}. Qualquer dúvida, é só responder por aqui. 💪`
+  return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`
+}
 
 const APPT_TYPES = ['Treino', 'Avaliação Física', 'Consultoria', 'Reavaliação', 'Outro']
 const STATUS_STYLES = {
@@ -26,12 +38,13 @@ const MONTH_NAMES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
 
 export function AgendaPage() {
   const { show } = useToast()
+  const { profile } = useAuth()
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingAppt, setEditingAppt] = useState(null)
-  const [form, setForm] = useState({ client_name: '', type: 'Treino', time: '', status: 'confirmed', notes: '' })
+  const [form, setForm] = useState({ client_name: '', telefone: '', type: 'Treino', time: '', status: 'confirmed' })
   const [saving, setSaving] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -61,31 +74,49 @@ export function AgendaPage() {
 
   function openCreate() {
     setEditingAppt(null)
-    setForm({ client_name: '', type: 'Treino', time: '', status: 'confirmed', notes: '' })
+    setForm({ client_name: '', telefone: '', type: 'Treino', time: '', status: 'confirmed' })
     setShowModal(true)
   }
 
   function openEdit(appt) {
     setEditingAppt(appt)
-    setForm({ client_name: appt.client_name, type: appt.type, time: appt.time, status: appt.status, notes: appt.notes || '' })
+    setForm({ client_name: appt.client_name, telefone: appt.telefone || '', type: appt.type, time: appt.time, status: appt.status })
     setShowModal(true)
   }
 
   async function handleSave(e) {
     e.preventDefault()
     setSaving(true)
-    const payload = { ...form, date: dateStr }
+
+    // Trava de conflito: impede dois agendamentos no mesmo dia/horário/tipo
+    const { available } = await checkAppointmentAvailability(dateStr, form.time, form.type, editingAppt?.id)
+    if (!available) {
+      setSaving(false)
+      show('Já existe um agendamento neste horário para este tipo.', 'error')
+      return
+    }
+
+    const payload = { ...form, date: dateStr, unit: profile?.unit || 'Central' }
+    let saved = null
     if (editingAppt) {
       const { data, error } = await updateAppointment(editingAppt.id, payload)
       if (error) show('Erro ao atualizar.', 'error')
-      else { setAppointments((prev) => prev.map((a) => a.id === editingAppt.id ? data : a)); show('Atualizado!', 'success') }
+      else { saved = data; setAppointments((prev) => prev.map((a) => a.id === editingAppt.id ? data : a)); show('Atualizado!', 'success') }
     } else {
       const { data, error } = await createAppointment(payload)
       if (error) show('Erro ao criar.', 'error')
-      else { setAppointments((prev) => [...prev, data].sort((a, b) => a.time.localeCompare(b.time))); show('Agendado!', 'success') }
+      else { saved = data; setAppointments((prev) => [...prev, data].sort((a, b) => a.time.localeCompare(b.time))); show('Agendado!', 'success') }
     }
     setSaving(false)
-    setShowModal(false)
+    if (saved) {
+      setShowModal(false)
+      // Abre a confirmação no WhatsApp (best-effort; também há botão 💬 por agendamento)
+      const link = waLink(saved)
+      if (link) {
+        const w = window.open(link, '_blank')
+        if (!w) show('Toque no ícone de WhatsApp no agendamento para confirmar.', 'info')
+      }
+    }
   }
 
   async function handleDelete(id) {
@@ -212,6 +243,15 @@ export function AgendaPage() {
                   {STATUS_LABELS[appt.status] || appt.status}
                 </span>
                 <div className="flex items-center gap-1">
+                  {appt.telefone && (
+                    <button
+                      onClick={() => { const l = waLink(appt); if (l) window.open(l, '_blank') }}
+                      title="Confirmar no WhatsApp"
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-emerald-50 transition-colors"
+                    >
+                      <span className="material-icons text-emerald-500 text-base">chat</span>
+                    </button>
+                  )}
                   <button onClick={() => openEdit(appt)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="material-icons text-gray-400 text-base">edit</span>
                   </button>
@@ -235,6 +275,16 @@ export function AgendaPage() {
               onChange={(e) => setForm((f) => ({ ...f, client_name: e.target.value }))}
               required
               placeholder="Nome da aluna"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">WhatsApp (telefone)</label>
+            <input
+              type="tel"
+              value={form.telefone}
+              onChange={(e) => setForm((f) => ({ ...f, telefone: e.target.value }))}
+              placeholder="(00) 00000-0000"
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors"
             />
           </div>
@@ -271,15 +321,6 @@ export function AgendaPage() {
             >
               {APPT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Observações</label>
-            <textarea
-              value={form.notes}
-              onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-              rows={2}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none focus:outline-none focus:border-primary transition-colors"
-            />
           </div>
           <button
             type="submit"

@@ -145,13 +145,49 @@ export async function getMyWorkouts(userId) {
 }
 
 export async function logWorkoutSet(logData) {
-  const { data } = await supabase.from('workout_logs').insert([logData])
-  return data
+  const { error } = await supabase.from('workout_logs').insert([logData])
+  return { error }
 }
 
 export async function getDashboardStats(userId) {
   const { count } = await supabase.from('workout_logs').select('*', { count: 'exact', head: true }).eq('user_id', userId)
   return { completedWorkouts: count || 0 }
+}
+
+// Estatísticas de evolução da aluna (gamificação): dias treinados, frequência
+// da semana atual e streak de dias consecutivos — derivados de workout_logs.
+export async function getUserStats(userId) {
+  const { data, error } = await supabase
+    .from('workout_logs')
+    .select('performed_at')
+    .eq('user_id', userId)
+    .limit(5000)
+  const logs = error ? [] : (data || [])
+  // Bucketiza por data LOCAL (en-CA => YYYY-MM-DD) de forma consistente
+  const localDay = (d) => d.toLocaleDateString('en-CA')
+  const daySet = new Set(logs.map((l) => (l.performed_at ? localDay(new Date(l.performed_at)) : null)).filter(Boolean))
+  const trainingDays = daySet.size
+
+  // Frequência da semana atual (Dom..Sáb)
+  const today = new Date()
+  const sunday = new Date(today)
+  sunday.setDate(today.getDate() - today.getDay())
+  const week = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(sunday)
+    d.setDate(sunday.getDate() + i)
+    return daySet.has(localDay(d))
+  })
+
+  // Streak: dias consecutivos até hoje (ou ontem, se ainda não treinou hoje)
+  let streak = 0
+  const cursor = new Date(today)
+  if (!daySet.has(localDay(cursor))) cursor.setDate(cursor.getDate() - 1)
+  while (daySet.has(localDay(cursor))) {
+    streak++
+    cursor.setDate(cursor.getDate() - 1)
+  }
+
+  return { trainingDays, week, streak }
 }
 
 // =========================================================================
@@ -189,7 +225,9 @@ export async function checkAppointmentAvailability(date, time, type, excludeId =
     .neq('status', 'cancelled')
   if (excludeId) query = query.neq('id', excludeId)
   const { count, error } = await query
-  return error ? false : count === 0
+  // fail-open: se a verificação falhar, deixa o banco ser a fonte da verdade
+  if (error) return { available: true, error }
+  return { available: count === 0, error: null }
 }
 
 export async function createAppointment(apptData) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { getMyWorkouts } from '@/services/api'
 import { Modal } from '@/components/ui/Modal'
+import { WorkoutSessionPlayer } from '@/components/student/WorkoutSessionPlayer'
 
 const MUSCLE_LABELS = {
   pernas: 'Pernas', gluteos: 'Glúteos', costas: 'Costas', peito: 'Peito',
@@ -14,6 +15,7 @@ export function WorkoutsPage() {
   const [loading, setLoading] = useState(true)
   const [selectedWorkout, setSelectedWorkout] = useState(null)
   const [selectedExercise, setSelectedExercise] = useState(null)
+  const [sessionWorkout, setSessionWorkout] = useState(null)
 
   useEffect(() => {
     if (!user?.id) return
@@ -47,16 +49,29 @@ export function WorkoutsPage() {
 
       {workouts.map((workout) => (
         <div key={workout.id} className="bg-white rounded-2xl border border-gray-100 shadow-pink-sm overflow-hidden">
-          <button
-            className="w-full p-4 flex items-center justify-between text-left"
-            onClick={() => setSelectedWorkout(selectedWorkout?.id === workout.id ? null : workout)}
-          >
-            <div>
-              <h3 className="font-bold text-gray-800">{workout.name}</h3>
-              <p className="text-xs text-gray-400 mt-0.5">{workout.items?.length || 0} exercícios</p>
-            </div>
-            <span className={`material-icons text-gray-400 transition-transform ${selectedWorkout?.id === workout.id ? 'rotate-180' : ''}`}>expand_more</span>
-          </button>
+          <div className="p-4 flex items-center gap-3">
+            <button
+              className="flex-1 flex items-center justify-between text-left min-w-0"
+              onClick={() => setSelectedWorkout(selectedWorkout?.id === workout.id ? null : workout)}
+            >
+              <div className="min-w-0">
+                <h3 className="font-bold text-gray-800 truncate">{workout.name}</h3>
+                <p className="text-xs text-gray-400 mt-0.5">{workout.items?.length || 0} exercícios</p>
+              </div>
+              <span className={`material-icons text-gray-400 transition-transform ${selectedWorkout?.id === workout.id ? 'rotate-180' : ''}`}>expand_more</span>
+            </button>
+          </div>
+
+          <div className="px-4 pb-4">
+            <button
+              onClick={() => setSessionWorkout(workout)}
+              disabled={!workout.items?.length}
+              className="w-full flex items-center justify-center gap-2 py-3 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary-dark active:scale-[0.99] transition-all disabled:opacity-50"
+            >
+              <span className="material-icons text-lg">play_arrow</span>
+              Iniciar treino
+            </button>
+          </div>
 
           {selectedWorkout?.id === workout.id && (
             <div className="border-t border-gray-100 divide-y divide-gray-50">
@@ -124,6 +139,15 @@ export function WorkoutsPage() {
           </div>
         )}
       </Modal>
+
+      {/* Player de treino guiado */}
+      {sessionWorkout && (
+        <WorkoutSessionPlayer
+          workout={sessionWorkout}
+          userId={user?.id}
+          onClose={() => setSessionWorkout(null)}
+        />
+      )}
     </div>
   )
 }
