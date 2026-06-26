@@ -1,0 +1,12 @@
+// Barrel do @emf/shared — ponto único de import para os 3 apps.
+export { supabase } from './lib/supabase'
+export * from './lib/roles'
+export { appUrls } from './lib/appUrls'
+export { AuthProvider, useAuth } from './contexts/AuthContext'
+export { ToastProvider, useToast } from './components/ui/Toast'
+export { Modal } from './components/ui/Modal'
+export { ProtectedRoute } from './router/ProtectedRoute'
+export { RoleRoute } from './router/RoleRoute'
+export { AuthLayout } from './components/layouts/AuthLayout'
+export { LoginPage } from './pages/auth/LoginPage'
+export * from './services/api'
