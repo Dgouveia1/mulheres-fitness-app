@@ -1,5 +1,10 @@
 # Relatório de Paridade — App legado (produção) × React migrado
 
+> **STATUS (atualizado):** ✅ Agenda, ✅ P0 (schema: avaliações/treinos/dietas/fitflix),
+> ✅ P1 Prontuário, ✅ P1 Chat com alunas, ✅ P2 builders admin (treinos/nutrição/fitflix).
+> ⏳ Pendente apenas: **Pagamento Asaas** (em stand-by, por decisão).
+
+
 Auditoria comparando o app **legado em vanilla-JS** (o que está em produção em
 `mulheres-fitness-app.vercel.app`, agora em `archive/legacy-assets/`) com o app
 **React** separado no monorepo (`apps/*` + `packages/shared`).
