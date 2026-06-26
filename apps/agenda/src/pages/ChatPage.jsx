@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useAuth } from '@emf/shared'
 import { getChatContacts, getChatMessages, sendMessage, getRecentMessagesSummary } from '@emf/shared'
 import { supabase } from '@emf/shared'
-import { ROLE_LABELS } from '@emf/shared'
+import { ROLE_LABELS, STAFF_ROLES } from '@emf/shared'
 
 export function ChatPage() {
   const { user, profile } = useAuth()
@@ -15,6 +15,7 @@ export function ChatPage() {
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState(null)
   const [search, setSearch] = useState('')
+  const [tab, setTab] = useState('all') // all | staff | clients
   const messagesEndRef = useRef()
   const channelRef = useRef(null)
   const activeContactRef = useRef(null)
@@ -127,9 +128,12 @@ export function ChatPage() {
     setSending(false)
   }
 
-  const filteredContacts = contacts.filter((c) =>
-    c.full_name?.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredContacts = contacts.filter((c) => {
+    if (!c.full_name?.toLowerCase().includes(search.toLowerCase())) return false
+    if (tab === 'staff') return c.role === 'group' || STAFF_ROLES.includes(c.role)
+    if (tab === 'clients') return c.role === 'user'
+    return true
+  })
 
   const roleLabel = (role) => {
     if (role === 'group') return ''
@@ -150,6 +154,17 @@ export function ChatPage() {
               placeholder="Buscar..."
               className="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-primary transition-colors"
             />
+          </div>
+          <div className="flex gap-1 mt-3 bg-gray-100 rounded-xl p-1">
+            {[{ k: 'all', l: 'Todas' }, { k: 'staff', l: 'Equipe' }, { k: 'clients', l: 'Alunas' }].map((t) => (
+              <button
+                key={t.k}
+                onClick={() => setTab(t.k)}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${tab === t.k ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                {t.l}
+              </button>
+            ))}
           </div>
         </div>
         <div className="flex-1 overflow-y-auto">

@@ -89,7 +89,7 @@ export function WorkoutsAdminPage() {
     }
     setSavingWorkout(true)
     const { error } = await createWorkoutRoutine(
-      { name: builderName, assigned_to: assignTo, created_by: user?.id },
+      { title: builderName, assigned_to: assignTo, created_by: user?.id },
       builderItems
     )
     setSavingWorkout(false)

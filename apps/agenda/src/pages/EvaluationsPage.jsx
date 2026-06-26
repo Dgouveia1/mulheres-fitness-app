@@ -1,31 +1,68 @@
 import { useEffect, useState } from 'react'
-import { getClients, getAssessments, createAssessment } from '@emf/shared'
-import { Modal } from '@emf/shared'
-import { useToast } from '@emf/shared'
-import { useAuth } from '@emf/shared'
+import { getClients, getAssessments, createAssessment, Modal, useToast } from '@emf/shared'
 
-const FIELDS = [
-  { key: 'weight_kg', label: 'Peso (kg)', placeholder: '65.5' },
-  { key: 'height_cm', label: 'Altura (cm)', placeholder: '165' },
-  { key: 'body_fat_pct', label: '% Gordura', placeholder: '22.5' },
-  { key: 'waist_cm', label: 'Cintura (cm)', placeholder: '70' },
-  { key: 'hip_cm', label: 'Quadril (cm)', placeholder: '98' },
-  { key: 'thigh_cm', label: 'Coxa (cm)', placeholder: '55' },
-  { key: 'arm_cm', label: 'Braço (cm)', placeholder: '28' },
-  { key: 'chest_cm', label: 'Busto (cm)', placeholder: '88' },
+// Medidas guardadas no JSON `measurements` (mesmo formato do app de produção).
+const MEASURES = [
+  { key: 'bust', label: 'Busto' },
+  { key: 'waist', label: 'Cintura' },
+  { key: 'abdomen', label: 'Abdômen' },
+  { key: 'hip', label: 'Quadril' },
+  { key: 'thigh_r', label: 'Coxa D.' },
+  { key: 'thigh_l', label: 'Coxa E.' },
 ]
 
+const EMPTY_FORM = { weight: '', height: '', bust: '', waist: '', abdomen: '', hip: '', thigh_r: '', thigh_l: '', notes: '' }
+
+function imc(weight, height) {
+  const w = parseFloat(weight); const h = parseFloat(height)
+  if (!w || !h) return null
+  return w / (h * h)
+}
+
+function imcColor(v) {
+  if (v == null) return 'text-gray-400'
+  if (v < 18.5) return 'text-blue-500'
+  if (v < 24.9) return 'text-emerald-500'
+  if (v < 29.9) return 'text-amber-500'
+  return 'text-red-500'
+}
+
+function EvolutionChart({ assessments }) {
+  // Últimas 10, em ordem cronológica (antigo -> novo)
+  const data = assessments.slice(0, 10).reverse().filter((a) => a.weight != null)
+  if (data.length < 2) {
+    return <p className="text-sm text-gray-400 text-center py-8">Precisa de pelo menos 2 avaliações para gerar o gráfico.</p>
+  }
+  const weights = data.map((d) => Number(d.weight))
+  const minW = Math.min(...weights) - 2
+  const maxW = Math.max(...weights) + 2
+  const range = maxW - minW || 1
+  return (
+    <div className="flex items-end justify-between gap-2 h-40 px-1">
+      {data.map((d, i) => {
+        const pct = ((Number(d.weight) - minW) / range) * 100
+        const date = new Date(d.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+        return (
+          <div key={i} className="flex-1 flex flex-col items-center justify-end h-full gap-1">
+            <span className="text-[10px] font-bold text-gray-600">{d.weight}</span>
+            <div className="w-full bg-primary/70 rounded-t-md" style={{ height: `${Math.max(8, pct)}%` }} />
+            <span className="text-[9px] text-gray-400">{date}</span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 export function EvaluationsPage() {
-  const { user } = useAuth()
   const { show } = useToast()
   const [clients, setClients] = useState([])
   const [selectedClient, setSelectedClient] = useState('')
   const [assessments, setAssessments] = useState([])
   const [loadingAssessments, setLoadingAssessments] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  const [form, setForm] = useState({})
+  const [form, setForm] = useState(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
-  const [notes, setNotes] = useState('')
 
   useEffect(() => {
     getClients().then(setClients)
@@ -40,34 +77,38 @@ export function EvaluationsPage() {
     })
   }, [selectedClient])
 
+  const selectedClientName = clients.find((c) => c.id === selectedClient)?.full_name || ''
+  const latest = assessments[0] || null
+  const latestImc = latest ? imc(latest.weight, latest.height) : null
+
   async function handleSave(e) {
     e.preventDefault()
     if (!selectedClient) { show('Selecione uma aluna.', 'warning'); return }
+    const weight = parseFloat(form.weight)
+    // Altura em metros; se vazia, herda da última avaliação
+    let height = parseFloat(form.height)
+    if (!height && latest?.height) height = Number(latest.height)
+    if (!weight || !height) { show('Peso e altura são obrigatórios (ou histórico anterior de altura).', 'warning'); return }
+
     setSaving(true)
-    const payload = {
-      user_id: selectedClient,
-      evaluated_by: user?.id,
-      notes,
-      ...Object.fromEntries(Object.entries(form).map(([k, v]) => [k, parseFloat(v) || null])),
-    }
+    const measurements = {}
+    MEASURES.forEach(({ key }) => { if (form[key] !== '') measurements[key] = parseFloat(form[key]) })
+    const payload = { user_id: selectedClient, weight, height, measurements, notes: form.notes }
     const { data, error } = await createAssessment(payload)
     setSaving(false)
     if (error) { show('Erro ao salvar avaliação.', 'error'); return }
     setAssessments((prev) => [data, ...prev])
     show('Avaliação registrada!', 'success')
     setShowModal(false)
-    setForm({})
-    setNotes('')
+    setForm(EMPTY_FORM)
   }
-
-  const selectedClientName = clients.find((c) => c.id === selectedClient)?.full_name || ''
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-800">Avaliações Físicas</h1>
         <button
-          onClick={() => { if (!selectedClient) { show('Selecione uma aluna primeiro.', 'warning'); return }; setShowModal(true) }}
+          onClick={() => { if (!selectedClient) { show('Selecione uma aluna primeiro.', 'warning'); return } setShowModal(true) }}
           className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary-dark active:scale-95 transition-all"
         >
           <span className="material-icons text-base">add</span>
@@ -75,90 +116,122 @@ export function EvaluationsPage() {
         </button>
       </div>
 
-      {/* Client selector */}
+      {/* Seletor de aluna */}
       <div className="bg-white rounded-2xl border border-gray-100 p-4">
         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Selecionar aluna</label>
         <select
           value={selectedClient}
           onChange={(e) => setSelectedClient(e.target.value)}
-          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors bg-white"
+          className="emf-input bg-white"
         >
           <option value="">Escolha uma aluna...</option>
           {clients.map((c) => <option key={c.id} value={c.id}>{c.full_name}</option>)}
         </select>
       </div>
 
-      {/* Assessments history */}
       {selectedClient && (
-        <div>
-          <h2 className="text-sm font-bold text-gray-600 mb-3">Histórico de {selectedClientName}</h2>
-          {loadingAssessments ? (
-            <div className="space-y-2">{[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)}</div>
-          ) : assessments.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
-              <span className="text-3xl">📋</span>
-              <p className="text-sm text-gray-400 mt-2">Nenhuma avaliação registrada.</p>
+        loadingAssessments ? (
+          <div className="bg-white rounded-2xl border border-gray-100 p-10 flex justify-center">
+            <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+          </div>
+        ) : assessments.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
+            <span className="text-3xl">📋</span>
+            <p className="text-sm text-gray-400 mt-2">Nenhuma avaliação registrada para {selectedClientName}.</p>
+          </div>
+        ) : (
+          <>
+            {/* Stats atuais */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+                <div className="text-xs text-gray-400 mb-1">IMC Atual</div>
+                <div className={`text-2xl font-extrabold ${imcColor(latestImc)}`}>{latestImc ? latestImc.toFixed(1) : '--'}</div>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+                <div className="text-xs text-gray-400 mb-1">Peso Atual</div>
+                <div className="text-2xl font-extrabold text-gray-800">{latest?.weight ?? '--'}<span className="text-sm font-semibold text-gray-400"> kg</span></div>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+                <div className="text-xs text-gray-400 mb-1">Altura</div>
+                <div className="text-2xl font-extrabold text-gray-800">{latest?.height ?? '--'}<span className="text-sm font-semibold text-gray-400"> m</span></div>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {assessments.map((a) => (
-                <div key={a.id} className="bg-white rounded-2xl border border-gray-100 p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-bold text-gray-800">
-                      {new Date(a.created_at).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
-                    {a.weight_kg && (
-                      <div className="flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full">
-                        <span className="text-sm font-bold">{a.weight_kg} kg</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {FIELDS.filter((f) => a[f.key] != null).map((f) => (
-                      <div key={f.key} className="bg-gray-50 rounded-xl p-2 text-center">
-                        <div className="text-sm font-bold text-gray-800">{a[f.key]}</div>
-                        <div className="text-[10px] text-gray-400">{f.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                  {a.notes && (
-                    <p className="text-xs text-gray-500 mt-3 italic border-t border-gray-50 pt-3">{a.notes}</p>
-                  )}
-                </div>
-              ))}
+
+            {/* Gráfico de evolução */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-4">
+              <h2 className="text-sm font-bold text-gray-600 mb-3">Evolução de Peso</h2>
+              <EvolutionChart assessments={assessments} />
             </div>
-          )}
-        </div>
+
+            {/* Histórico */}
+            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+              <h2 className="text-sm font-bold text-gray-600 p-4 pb-2">Histórico de {selectedClientName}</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
+                      <th className="px-4 py-2 font-semibold">Data</th>
+                      <th className="px-2 py-2 font-semibold">Peso</th>
+                      <th className="px-2 py-2 font-semibold">Cintura</th>
+                      <th className="px-2 py-2 font-semibold">Quadril</th>
+                      <th className="px-4 py-2 font-semibold text-right">IMC</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {assessments.map((a) => {
+                      const v = imc(a.weight, a.height)
+                      return (
+                        <tr key={a.id} className="border-b border-gray-50 last:border-0">
+                          <td className="px-4 py-2.5 text-gray-600">{new Date(a.created_at).toLocaleDateString('pt-BR')}</td>
+                          <td className="px-2 py-2.5 font-semibold text-gray-800">{a.weight} kg</td>
+                          <td className="px-2 py-2.5 text-gray-600">{a.measurements?.waist ?? '—'}</td>
+                          <td className="px-2 py-2.5 text-gray-600">{a.measurements?.hip ?? '—'}</td>
+                          <td className="px-4 py-2.5 text-right">
+                            <span className={`font-bold ${imcColor(v)}`}>{v ? v.toFixed(1) : '—'}</span>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )
       )}
 
-      {/* New evaluation modal */}
+      {/* Modal Nova Avaliação */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={`Nova Avaliação — ${selectedClientName}`} size="lg">
         <form onSubmit={handleSave} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            {FIELDS.map((f) => (
-              <div key={f.key}>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{f.label}</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={form[f.key] || ''}
-                  onChange={(e) => setForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
-                  placeholder={f.placeholder}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors"
-                />
-              </div>
-            ))}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Peso (kg)</label>
+              <input type="number" step="0.1" value={form.weight} onChange={(e) => setForm((f) => ({ ...f, weight: e.target.value }))} placeholder="65.5" required className="emf-input" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Altura (m)</label>
+              <input type="number" step="0.01" value={form.height} onChange={(e) => setForm((f) => ({ ...f, height: e.target.value }))} placeholder="1.65" className="emf-input" />
+              <small className="text-[11px] text-gray-400">Em branco mantém a anterior.</small>
+            </div>
           </div>
+
+          <div>
+            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 border-b border-gray-100 pb-1">Medidas (cm)</h4>
+            <div className="grid grid-cols-3 gap-3">
+              {MEASURES.map((m) => (
+                <div key={m.key}>
+                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">{m.label}</label>
+                  <input type="number" step="0.5" value={form[m.key]} onChange={(e) => setForm((f) => ({ ...f, [m.key]: e.target.value }))} className="emf-input !px-3 !py-2" />
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Observações</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              placeholder="Notas da avaliação, objetivos, recomendações..."
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none focus:outline-none focus:border-primary transition-colors"
-            />
+            <textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} rows={3} placeholder="Notas, objetivos, recomendações..." className="emf-input resize-none" />
           </div>
+
           <button
             type="submit"
             disabled={saving}

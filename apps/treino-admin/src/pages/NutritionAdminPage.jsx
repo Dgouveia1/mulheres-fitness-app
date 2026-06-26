@@ -48,7 +48,7 @@ export function NutritionAdminPage() {
     if (!dietName.trim() || !assignTo) { show('Preencha o nome e selecione a aluna.', 'warning'); return }
     setSaving(true)
     const { error } = await createDietPlan(
-      { name: dietName, assigned_to: assignTo, is_active: true, created_by: user?.id },
+      { title: dietName, assigned_to: assignTo, is_active: true, created_by: user?.id },
       meals.filter((m) => m.name.trim())
     )
     setSaving(false)

@@ -17,7 +17,7 @@ export function FitFlixPage() {
     })
   }, [])
 
-  const filtered = activeCategory === 'all' ? videos : videos.filter((v) => v.category_id === activeCategory)
+  const filtered = activeCategory === 'all' ? videos : videos.filter((v) => v.category === activeCategory)
 
   if (loading) {
     return (
@@ -42,8 +42,8 @@ export function FitFlixPage() {
         {categories.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => setActiveCategory(cat.id)}
-            className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all ${activeCategory === cat.id ? 'bg-primary text-white' : 'bg-white text-gray-500 border border-gray-200'}`}
+            onClick={() => setActiveCategory(cat.name)}
+            className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all ${activeCategory === cat.name ? 'bg-primary text-white' : 'bg-white text-gray-500 border border-gray-200'}`}
           >
             {cat.name}
           </button>

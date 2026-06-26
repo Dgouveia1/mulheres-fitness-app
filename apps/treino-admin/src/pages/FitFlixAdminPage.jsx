@@ -10,7 +10,7 @@ export function FitFlixAdminPage() {
   const [loading, setLoading] = useState(true)
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [editingVideo, setEditingVideo] = useState(null)
-  const [form, setForm] = useState({ title: '', description: '', category_id: '' })
+  const [form, setForm] = useState({ title: '', description: '', category: '' })
   const [videoFile, setVideoFile] = useState(null)
   const [thumbFile, setThumbFile] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -28,7 +28,7 @@ export function FitFlixAdminPage() {
 
   function openCreate() {
     setEditingVideo(null)
-    setForm({ title: '', description: '', category_id: categories[0]?.id || '' })
+    setForm({ title: '', description: '', category: categories[0]?.name || '' })
     setVideoFile(null)
     setThumbFile(null)
     setShowVideoModal(true)
@@ -36,7 +36,7 @@ export function FitFlixAdminPage() {
 
   function openEdit(v) {
     setEditingVideo(v)
-    setForm({ title: v.title, description: v.description || '', category_id: v.category_id || '' })
+    setForm({ title: v.title, description: v.description || '', category: v.category || '' })
     setVideoFile(null)
     setThumbFile(null)
     setShowVideoModal(true)
@@ -154,7 +154,7 @@ export function FitFlixAdminPage() {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-800 truncate">{v.title}</p>
-                <p className="text-xs text-gray-400">{categories.find((c) => c.id === v.category_id)?.name || 'Sem categoria'}</p>
+                <p className="text-xs text-gray-400">{v.category || 'Sem categoria'}</p>
               </div>
               <div className="flex items-center gap-1">
                 <button onClick={() => openEdit(v)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
@@ -185,12 +185,12 @@ export function FitFlixAdminPage() {
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Categoria</label>
             <select
-              value={form.category_id}
-              onChange={(e) => setForm((f) => ({ ...f, category_id: e.target.value }))}
+              value={form.category}
+              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors bg-white"
             >
               <option value="">Sem categoria</option>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              {categories.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
             </select>
           </div>
           <div>

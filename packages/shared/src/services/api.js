@@ -279,13 +279,14 @@ export async function createAssessment(payload) {
 // CHAT
 // =========================================================================
 
+// Retorna TODOS os perfis (equipe + alunas) — o app de produção permite que a
+// equipe converse com alunas. A separação por aba (Equipe/Alunas) é feita na UI.
 export async function getChatContacts() {
   const { data, error } = await supabase
     .from('profiles')
     .select('id, full_name, role, unit')
-    .in('role', STAFF_ROLES)
     .order('full_name')
-    .limit(300)
+    .limit(500)
   return error ? [] : data
 }
 

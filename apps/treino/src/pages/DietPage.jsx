@@ -39,7 +39,7 @@ export function DietPage() {
       {/* Header */}
       <div className="bg-gradient-to-br from-emerald-500 to-emerald-700 text-white rounded-2xl p-5">
         <div className="text-xs opacity-80 font-semibold uppercase tracking-wider">Plano Ativo</div>
-        <h1 className="text-xl font-bold mt-1">{diet.name}</h1>
+        <h1 className="text-xl font-bold mt-1">{diet.title}</h1>
         {diet.description && <p className="text-sm opacity-90 mt-1">{diet.description}</p>}
         <div className="flex gap-4 mt-3">
           {diet.total_calories && (

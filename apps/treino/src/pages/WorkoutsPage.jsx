@@ -55,7 +55,7 @@ export function WorkoutsPage() {
               onClick={() => setSelectedWorkout(selectedWorkout?.id === workout.id ? null : workout)}
             >
               <div className="min-w-0">
-                <h3 className="font-bold text-gray-800 truncate">{workout.name}</h3>
+                <h3 className="font-bold text-gray-800 truncate">{workout.title}</h3>
                 <p className="text-xs text-gray-400 mt-0.5">{workout.items?.length || 0} exercícios</p>
               </div>
               <span className={`material-icons text-gray-400 transition-transform ${selectedWorkout?.id === workout.id ? 'rotate-180' : ''}`}>expand_more</span>
