@@ -14,6 +14,8 @@ export function FitFlixAdminPage() {
   const [videoFile, setVideoFile] = useState(null)
   const [thumbFile, setThumbFile] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [status, setStatus] = useState('')
   const [newCatName, setNewCatName] = useState('')
   const videoInputRef = useRef()
   const thumbInputRef = useRef()
@@ -45,12 +47,14 @@ export function FitFlixAdminPage() {
   async function handleSave(e) {
     e.preventDefault()
     setSaving(true)
+    setProgress(0); setStatus('')
     try {
       let videoUrl = editingVideo?.video_url
       let thumbnailUrl = editingVideo?.thumbnail_url
 
-      if (videoFile) videoUrl = await uploadFitFlixFile(videoFile, 'videos')
-      if (thumbFile) thumbnailUrl = await uploadFitFlixFile(thumbFile, 'thumbnails')
+      if (thumbFile) { setStatus('Enviando capa…'); setProgress(20); thumbnailUrl = await uploadFitFlixFile(thumbFile, 'thumbnails') }
+      if (videoFile) { setStatus('Enviando vídeo… (pode demorar)'); setProgress(60); videoUrl = await uploadFitFlixFile(videoFile, 'videos') }
+      setStatus('Salvando…'); setProgress(90)
 
       const payload = { ...form, video_url: videoUrl, thumbnail_url: thumbnailUrl }
 
@@ -60,16 +64,18 @@ export function FitFlixAdminPage() {
         setVideos((prev) => prev.map((v) => v.id === editingVideo.id ? data : v))
         show('Vídeo atualizado!', 'success')
       } else {
-        const { data, error } = await createVideo(payload)
+        const { data, error } = await createVideo({ ...payload, duration_minutes: 0 })
         if (error) throw error
         setVideos((prev) => [data, ...prev])
         show('Vídeo criado!', 'success')
       }
+      setProgress(100)
       setShowVideoModal(false)
     } catch (err) {
       show('Erro ao salvar vídeo.', 'error')
     }
     setSaving(false)
+    setProgress(0); setStatus('')
   }
 
   async function handleDelete(id) {
@@ -218,6 +224,16 @@ export function FitFlixAdminPage() {
               </button>
             </div>
           </div>
+          {saving && (thumbFile || videoFile) && (
+            <div>
+              <div className="flex justify-between text-xs text-primary font-semibold mb-1">
+                <span>{status}</span><span>{progress}%</span>
+              </div>
+              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+          )}
           <button
             type="submit"
             disabled={saving}
