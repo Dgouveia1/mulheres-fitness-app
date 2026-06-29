@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../../components/ui/Toast'
 import { appUrls } from '../../lib/appUrls'
+import { supabase } from '../../lib/supabase'
 
 // Login compartilhado, parametrizado por app:
 // - allowedRoles: papéis que este app aceita
@@ -20,14 +21,27 @@ export function LoginPage({ allowedRoles = [], redirectTo = '/', registerPath = 
     e.preventDefault()
     setLoading(true)
     const { data, error } = await signIn(email, password)
-    setLoading(false)
 
     if (error) {
+      setLoading(false)
       show('E-mail ou senha incorretos.', 'error')
       return
     }
 
-    const role = data?.user?.user_metadata?.role || 'user'
+    // Papel AUTORITATIVO vem da tabela `profiles` (mesma fonte do AuthContext e
+    // do RoleRoute). user_metadata.role é só fallback p/ contas sem profile ainda.
+    let role = data?.user?.user_metadata?.role
+    if (data?.user?.id) {
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .maybeSingle()
+      if (prof?.role) role = prof.role
+    }
+    role = role || 'user'
+    setLoading(false)
+
     if (allowedRoles.length === 0 || allowedRoles.includes(role)) {
       navigate(redirectTo, { replace: true })
       return
