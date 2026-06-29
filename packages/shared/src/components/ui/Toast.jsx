@@ -32,11 +32,16 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ show }}>
       {children}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-[90vw] max-w-sm pointer-events-none">
+      <div
+        aria-live="polite"
+        aria-atomic="false"
+        className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[60] flex flex-col gap-2 w-[90vw] max-w-sm pointer-events-none"
+      >
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-white text-sm font-medium shadow-lg pointer-events-auto cursor-pointer ${typeStyles[toast.type] || typeStyles.info}`}
+            role="status"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-white text-sm font-medium shadow-soft-lg pointer-events-auto cursor-pointer animate-slide-up ${typeStyles[toast.type] || typeStyles.info}`}
             onClick={() => hide(toast.id)}
           >
             <span className="material-icons text-base">{typeIcons[toast.type] || 'info'}</span>

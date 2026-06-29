@@ -31,76 +31,94 @@ function PostCard({ post, currentUserId, onLike, onComment }) {
   }
 
   return (
-    <article className="bg-white rounded-2xl border border-gray-100 shadow-pink-sm overflow-hidden">
+    <article className="emf-card overflow-hidden animate-fade-in">
       {/* Header */}
-      <div className="flex items-center gap-3 p-3">
-        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-          <span className="material-icons text-primary text-base">person</span>
+      <div className="flex items-center gap-3 p-3.5">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center shadow-soft shrink-0">
+          <span className="material-icons text-white text-lg">person</span>
         </div>
-        <div>
-          <p className="text-sm font-semibold text-gray-800">{post.profiles?.full_name || 'Anônima'}</p>
-          <p className="text-xs text-gray-400">{new Date(post.created_at).toLocaleDateString('pt-BR')}</p>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-content truncate">{post.profiles?.full_name || 'Anônima'}</p>
+          <p className="text-xs text-content-subtle flex items-center gap-1">
+            <span className="material-icons text-[12px] leading-none">schedule</span>
+            {new Date(post.created_at).toLocaleDateString('pt-BR')}
+          </p>
         </div>
       </div>
 
       {/* Image */}
       {post.image_url && (
-        <img src={post.image_url} alt="" className="w-full object-cover max-h-96" />
+        <img src={post.image_url} alt={post.caption || 'Publicação da comunidade'} className="w-full object-cover max-h-96" />
       )}
 
       {/* Caption */}
-      {post.caption && <p className="px-4 py-2 text-sm text-gray-700">{post.caption}</p>}
+      {post.caption && <p className="px-4 py-3 text-sm text-content leading-relaxed">{post.caption}</p>}
 
       {/* Actions */}
-      <div className="px-4 pb-3 flex items-center gap-4">
+      <div className="px-3 pb-2.5 pt-1.5 flex items-center gap-1">
         <button
           onClick={() => onLike(post.id)}
-          className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${post.is_liked ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
+          aria-label={post.is_liked ? 'Remover curtida' : 'Curtir publicação'}
+          aria-pressed={post.is_liked}
+          className={`flex items-center gap-1.5 text-sm font-semibold rounded-full px-3 min-h-[44px] transition-all duration-200 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${post.is_liked ? 'text-primary bg-primary/10' : 'text-content-muted hover:text-primary hover:bg-primary/10'}`}
         >
-          <span className="material-icons text-lg">{post.is_liked ? 'favorite' : 'favorite_border'}</span>
+          <span className="material-icons text-xl">{post.is_liked ? 'favorite' : 'favorite_border'}</span>
           {post.likes_count || 0}
         </button>
         <button
           onClick={handleToggleComments}
-          className="flex items-center gap-1.5 text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors"
+          aria-expanded={showComments}
+          className="flex items-center gap-1.5 text-sm font-semibold rounded-full px-3 min-h-[44px] text-content-muted hover:text-content hover:bg-muted transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         >
-          <span className="material-icons text-lg">chat_bubble_outline</span>
+          <span className="material-icons text-xl">chat_bubble_outline</span>
           Comentários
         </button>
       </div>
 
       {/* Comments */}
       {showComments && (
-        <div className="border-t border-gray-50 px-4 py-3 space-y-3">
+        <div className="border-t border-line bg-muted/40 px-4 py-3 space-y-3 animate-slide-up">
           {loadingComments ? (
-            <div className="flex justify-center py-2">
-              <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+            <div className="space-y-3">
+              {[0, 1].map((i) => (
+                <div key={i} className="flex gap-2">
+                  <div className="emf-skeleton w-7 h-7 rounded-full shrink-0" />
+                  <div className="emf-skeleton flex-1 h-12 rounded-xl" />
+                </div>
+              ))}
             </div>
           ) : (
             <>
               {comments.map((c) => (
-                <div key={c.id} className="flex gap-2">
-                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <span className="material-icons text-primary text-xs">person</span>
+                <div key={c.id} className="flex gap-2 animate-fade-in">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-secondary to-secondary-light flex items-center justify-center shrink-0 shadow-soft">
+                    <span className="material-icons text-white text-sm">person</span>
                   </div>
-                  <div className="flex-1 bg-gray-50 rounded-xl px-3 py-2">
-                    <p className="text-xs font-semibold text-gray-700">{c.profiles?.full_name || 'Aluna'}</p>
-                    <p className="text-xs text-gray-600 mt-0.5">{c.content}</p>
+                  <div className="flex-1 bg-surface border border-line rounded-xl px-3 py-2">
+                    <p className="text-xs font-semibold text-content">{c.profiles?.full_name || 'Aluna'}</p>
+                    <p className="text-xs text-content-muted mt-0.5 leading-relaxed">{c.content}</p>
                   </div>
                 </div>
               ))}
-              <form onSubmit={handleAddComment} className="flex gap-2">
+              <form onSubmit={handleAddComment} className="flex gap-2 items-center">
                 <input
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   placeholder="Escreva um comentário..."
-                  className="flex-1 text-xs px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-primary transition-colors"
+                  aria-label="Escreva um comentário"
+                  className="emf-input flex-1 text-xs py-2.5 min-h-[44px]"
                 />
                 <button
                   type="submit"
                   disabled={posting || !commentText.trim()}
-                  className="px-3 py-2 bg-primary text-white rounded-xl text-xs font-semibold disabled:opacity-50 transition-all active:scale-95"
+                  aria-label="Enviar comentário"
+                  className="emf-btn-primary px-4 min-h-[44px] text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                 >
+                  {posting ? (
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <span className="material-icons text-base">send</span>
+                  )}
                   Enviar
                 </button>
               </form>
@@ -173,8 +191,27 @@ export function FitGranPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+      <div className="p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="emf-skeleton h-7 w-28 rounded-lg" />
+          <div className="emf-skeleton h-10 w-24 rounded-full" />
+        </div>
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="emf-card overflow-hidden">
+            <div className="flex items-center gap-3 p-3.5">
+              <div className="emf-skeleton w-10 h-10 rounded-full" />
+              <div className="space-y-2">
+                <div className="emf-skeleton h-3.5 w-32 rounded" />
+                <div className="emf-skeleton h-3 w-20 rounded" />
+              </div>
+            </div>
+            <div className="emf-skeleton h-56 w-full" />
+            <div className="p-4 space-y-2">
+              <div className="emf-skeleton h-3.5 w-3/4 rounded" />
+              <div className="emf-skeleton h-3.5 w-1/2 rounded" />
+            </div>
+          </div>
+        ))}
       </div>
     )
   }
@@ -182,10 +219,17 @@ export function FitGranPage() {
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-800">FitGran</h1>
+        <div className="animate-fade-in">
+          <h1 className="text-2xl font-bold text-content tracking-tight flex items-center gap-2">
+            <span className="material-icons text-primary">groups</span>
+            FitGran
+          </h1>
+          <p className="text-xs text-content-muted mt-0.5">Compartilhe sua jornada com a comunidade</p>
+        </div>
         <button
           onClick={() => setShowPostForm((s) => !s)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary-dark active:scale-95 transition-all"
+          aria-expanded={showPostForm}
+          className={`flex items-center gap-2 min-h-[44px] px-5 rounded-full text-sm font-semibold active:scale-95 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 shadow-soft ${showPostForm ? 'bg-muted text-content hover:bg-muted/70' : 'bg-gradient-to-br from-primary to-primary-light text-white hover:shadow-pink-md'}`}
         >
           <span className="material-icons text-base">{showPostForm ? 'close' : 'add_a_photo'}</span>
           {showPostForm ? 'Cancelar' : 'Postar'}
@@ -194,26 +238,29 @@ export function FitGranPage() {
 
       {/* Post form */}
       {showPostForm && (
-        <form onSubmit={handlePost} className="bg-white rounded-2xl border border-gray-100 shadow-pink-sm p-4 space-y-3">
+        <form onSubmit={handlePost} className="emf-card p-4 space-y-3 animate-scale-in">
           {imagePreview ? (
             <div className="relative">
-              <img src={imagePreview} alt="preview" className="w-full rounded-xl object-cover max-h-64" />
+              <img src={imagePreview} alt="Pré-visualização da foto a publicar" className="w-full rounded-xl object-cover max-h-64" />
               <button
                 type="button"
                 onClick={() => { setImageFile(null); setImagePreview(null) }}
-                className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center"
+                aria-label="Remover foto"
+                className="absolute top-2 right-2 w-9 h-9 bg-black/55 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/70 active:scale-95 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
-                <span className="material-icons text-white text-sm">close</span>
+                <span className="material-icons text-white text-base">close</span>
               </button>
             </div>
           ) : (
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full h-36 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-primary/40 transition-colors"
+              className="w-full h-36 border-2 border-dashed border-line rounded-xl flex flex-col items-center justify-center gap-2 text-content-muted hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
-              <span className="material-icons text-3xl">add_photo_alternate</span>
-              <span className="text-xs">Adicionar foto</span>
+              <span className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="material-icons text-3xl text-primary">add_photo_alternate</span>
+              </span>
+              <span className="text-xs font-medium">Adicionar foto</span>
             </button>
           )}
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
@@ -221,15 +268,16 @@ export function FitGranPage() {
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             placeholder="Compartilhe algo com a comunidade..."
+            aria-label="Legenda da publicação"
             rows={2}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm resize-none focus:outline-none focus:border-primary transition-colors"
+            className="emf-input w-full text-sm resize-none"
           />
           <button
             type="submit"
             disabled={posting || (!imageFile && !caption.trim())}
-            className="w-full py-2.5 bg-primary text-white font-bold rounded-xl text-sm hover:bg-primary-dark disabled:opacity-50 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="emf-btn-primary w-full min-h-[44px] font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {posting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
+            {posting ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <span className="material-icons text-base">send</span>}
             Publicar
           </button>
         </form>
@@ -237,9 +285,19 @@ export function FitGranPage() {
 
       {/* Posts */}
       {posts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-48 text-center">
-          <span className="text-4xl mb-2">📸</span>
-          <p className="text-sm text-gray-400">Nenhuma publicação ainda. Seja a primeira!</p>
+        <div className="emf-card flex flex-col items-center justify-center py-14 px-6 text-center animate-fade-in">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <span className="material-icons text-3xl text-primary">photo_camera</span>
+          </div>
+          <p className="text-sm font-semibold text-content">Nenhuma publicação ainda</p>
+          <p className="text-sm text-content-muted mt-1">Seja a primeira a compartilhar!</p>
+          <button
+            onClick={() => setShowPostForm(true)}
+            className="emf-btn-primary mt-5 min-h-[44px] text-sm"
+          >
+            <span className="material-icons text-base">add_a_photo</span>
+            Criar publicação
+          </button>
         </div>
       ) : (
         posts.map((post) => (

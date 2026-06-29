@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
-import { useAuth } from '@emf/shared'
+import { useAuth, ThemeToggle } from '@emf/shared'
 
 const NAV_ITEMS = [
   { to: '/dashboard', icon: 'home', label: 'Home' },
@@ -16,45 +16,69 @@ export function StudentLayout() {
   return (
     <div className="flex flex-col min-h-screen bg-background max-w-md mx-auto relative">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between shadow-pink-sm">
+      <header className="glass-nav sticky top-0 z-30 border-b px-4 py-3 flex items-center justify-between shadow-soft">
         <div className="flex items-center gap-2">
           <span className="font-main font-extrabold text-primary text-lg uppercase tracking-wider">Espaço</span>
           <span className="font-script text-primary text-2xl leading-none">Mulher</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
           {profile?.avatar_url ? (
-            <img src={profile.avatar_url} alt="avatar" className="w-8 h-8 rounded-full object-cover border-2 border-primary/20" />
+            <img
+              src={profile.avatar_url}
+              alt={profile?.name ? `Foto de ${profile.name}` : 'Foto do perfil'}
+              className="w-9 h-9 rounded-full object-cover ring-2 ring-primary/20 shadow-soft"
+            />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="material-icons text-primary text-sm">person</span>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center shadow-soft">
+              <span className="material-icons text-white text-base">person</span>
             </div>
           )}
         </div>
       </header>
 
       {/* Content */}
-      <main className="flex-1 overflow-y-auto pb-20">
+      <main className="flex-1 overflow-y-auto pb-24">
         <Outlet />
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-100 shadow-pink-md z-30 pb-safe">
-        <div className="flex items-center justify-around">
+      <nav
+        className="glass-nav fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md border-t shadow-soft-lg z-30 pb-safe"
+        aria-label="Navegação principal"
+      >
+        <div className="flex items-center justify-around px-1">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
+              aria-label={item.label}
               className={({ isActive }) =>
-                `relative flex flex-col items-center gap-0.5 py-2 px-3 min-w-0 flex-1 transition-colors ${
-                  isActive ? 'text-primary' : 'text-gray-400 hover:text-gray-600'
+                `group relative flex flex-col items-center justify-center gap-0.5 py-2 px-2 min-w-0 min-h-[44px] flex-1 rounded-2xl transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+                  isActive ? 'text-primary' : 'text-content-subtle hover:text-content-muted'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <span className={`material-icons text-2xl ${isActive ? 'text-primary' : ''}`}>{item.icon}</span>
-                  <span className={`text-[10px] font-medium font-main truncate ${isActive ? 'text-primary' : ''}`}>{item.label}</span>
-                  {isActive && <div className="absolute bottom-0 w-5 h-0.5 bg-primary rounded-full" />}
+                  <span
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`flex items-center justify-center w-9 h-7 rounded-full transition-all duration-200 ${
+                      isActive ? 'bg-primary/10' : 'group-hover:bg-muted'
+                    }`}
+                  >
+                    <span className={`material-icons text-2xl transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}>
+                      {item.icon}
+                    </span>
+                  </span>
+                  <span className={`text-[10px] font-main truncate transition-colors duration-200 ${isActive ? 'font-semibold' : 'font-medium'}`}>
+                    {item.label}
+                  </span>
+                  <div
+                    className={`absolute -bottom-0.5 h-1 rounded-full bg-primary transition-all duration-300 ${
+                      isActive ? 'w-5 opacity-100' : 'w-0 opacity-0'
+                    }`}
+                  />
                 </>
               )}
             </NavLink>

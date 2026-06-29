@@ -153,21 +153,42 @@ export function WorkoutsAdminPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-800">Treinos</h1>
-        {activeTab === 'library' && (
-          <button onClick={openCreateEx} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary-dark active:scale-95 transition-all">
-            <span className="material-icons text-base">add</span>
-            Exercício
-          </button>
-        )}
+    <div className="space-y-5 animate-fade-in">
+      {/* Hero header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary-light p-5 shadow-soft-lg">
+        <span className="material-icons pointer-events-none absolute -right-4 -top-4 text-white/15 text-[120px] select-none">fitness_center</span>
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-extrabold text-white drop-shadow-sm">Treinos</h1>
+            <p className="mt-1 text-sm text-white/80">Monte fichas e gerencie sua biblioteca de exercícios</p>
+          </div>
+          {activeTab === 'library' && (
+            <button
+              onClick={openCreateEx}
+              aria-label="Novo exercício"
+              className="flex shrink-0 items-center gap-2 rounded-full bg-white/95 px-4 py-2.5 text-sm font-bold text-primary shadow-soft transition-all hover:bg-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 min-h-[44px]"
+            >
+              <span className="material-icons text-base">add</span>
+              Exercício
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
-        {[['builder', '🏗️ Montador'], ['library', '📚 Biblioteca']].map(([tab, label]) => (
-          <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+      {/* Tabs — segmented control */}
+      <div className="flex gap-1 rounded-2xl bg-muted p-1 shadow-soft">
+        {[['builder', 'construction', 'Montador'], ['library', 'menu_book', 'Biblioteca']].map(([tab, icon, label]) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            aria-pressed={activeTab === tab}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-all min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+              activeTab === tab
+                ? 'bg-surface text-primary shadow-soft'
+                : 'text-content-muted hover:text-content'
+            }`}
+          >
+            <span className="material-icons text-lg">{icon}</span>
             {label}
           </button>
         ))}
@@ -175,30 +196,75 @@ export function WorkoutsAdminPage() {
 
       {/* Library */}
       {activeTab === 'library' && (
-        <div className="space-y-3">
+        <div className="space-y-3 animate-slide-up">
           <div className="relative">
-            <span className="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
-            <input value={searchEx} onChange={(e) => setSearchEx(e.target.value)} placeholder="Buscar exercício..." className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors" />
+            <span className="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-content-subtle text-lg pointer-events-none">search</span>
+            <input
+              value={searchEx}
+              onChange={(e) => setSearchEx(e.target.value)}
+              placeholder="Buscar exercício..."
+              aria-label="Buscar exercício"
+              className="emf-input pl-10"
+            />
           </div>
           {loading ? (
-            <div className="space-y-2">{[...Array(4)].map((_, i) => <div key={i} className="h-16 bg-gray-100 rounded-xl animate-pulse" />)}</div>
+            <div className="space-y-2">{[...Array(4)].map((_, i) => <div key={i} className="emf-skeleton h-20 rounded-2xl" />)}</div>
+          ) : filteredEx.length === 0 ? (
+            <div className="emf-card flex flex-col items-center justify-center px-4 py-12 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <span className="material-icons text-primary text-3xl">search_off</span>
+              </div>
+              <p className="mt-3 text-sm font-semibold text-content">Nenhum exercício encontrado</p>
+              <p className="mt-1 text-xs text-content-muted">{searchEx ? 'Tente outra busca.' : 'Crie seu primeiro exercício.'}</p>
+            </div>
           ) : (
             <div className="space-y-2">
               {filteredEx.map((ex) => (
-                <div key={ex.id} className="bg-white rounded-xl border border-gray-100 px-4 py-3 flex items-center gap-3">
+                <div key={ex.id} className="emf-card group flex items-center gap-3 p-3 transition-all hover:shadow-soft-lg hover:border-primary/30">
                   {ex.image_url ? (
-                    <img src={ex.image_url} alt="" className="w-12 h-12 rounded-lg object-cover bg-gray-100" />
+                    <img src={ex.image_url} alt={ex.name} className="h-16 w-16 shrink-0 rounded-xl object-cover bg-muted" />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center"><span className="material-icons text-primary text-base">fitness_center</span></div>
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-secondary/15">
+                      <span className="material-icons text-primary text-2xl">fitness_center</span>
+                    </div>
                   )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-800 truncate">{ex.name}</p>
-                    <p className="text-xs text-gray-400 capitalize">{ex.muscle_group}{ex.video_url ? ' • 📹' : ''}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold text-content">{ex.name}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                      <span className="emf-badge bg-secondary/15 capitalize text-secondary">{ex.muscle_group}</span>
+                      {ex.video_url && (
+                        <span className="emf-badge inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15">
+                          <span className="material-icons text-[14px]">videocam</span>
+                          Vídeo
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => addToBuilder(ex)} title="Adicionar ao montador" className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-primary/10 transition-colors"><span className="material-icons text-primary text-base">add_circle</span></button>
-                    <button onClick={() => openEditEx(ex)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"><span className="material-icons text-gray-400 text-base">edit</span></button>
-                    <button onClick={() => handleDeleteEx(ex.id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors"><span className="material-icons text-red-400 text-base">delete</span></button>
+                    <button
+                      onClick={() => addToBuilder(ex)}
+                      title="Adicionar ao montador"
+                      aria-label={`Adicionar ${ex.name} ao montador`}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-primary transition-colors hover:bg-primary/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    >
+                      <span className="material-icons text-xl">add_circle</span>
+                    </button>
+                    <button
+                      onClick={() => openEditEx(ex)}
+                      title="Editar exercício"
+                      aria-label={`Editar ${ex.name}`}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-content-muted transition-colors hover:bg-muted active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    >
+                      <span className="material-icons text-xl">edit</span>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteEx(ex.id)}
+                      title="Excluir exercício"
+                      aria-label={`Excluir ${ex.name}`}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-red-400 transition-colors hover:bg-red-500/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40"
+                    >
+                      <span className="material-icons text-xl">delete</span>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -209,24 +275,32 @@ export function WorkoutsAdminPage() {
 
       {/* Builder */}
       {activeTab === 'builder' && (
-        <div className="space-y-4">
-          <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-gray-600">Informações do Treino</h2>
+        <div className="space-y-4 animate-slide-up">
+          <div className="emf-card space-y-3 p-4">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-content">
+                <span className="material-icons text-primary text-lg">tune</span>
+                Informações do Treino
+              </h2>
               {templates.length > 0 && (
-                <select onChange={(e) => { loadTemplate(e.target.value); e.target.value = '' }} defaultValue="" className="text-xs px-2 py-1 rounded-lg border border-gray-200 bg-white text-gray-600 focus:outline-none focus:border-primary">
+                <select
+                  onChange={(e) => { loadTemplate(e.target.value); e.target.value = '' }}
+                  defaultValue=""
+                  aria-label="Carregar modelo de treino"
+                  className="rounded-xl border border-line bg-surface px-2.5 py-2 text-xs font-medium text-content-muted transition-colors focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
                   <option value="">Carregar modelo…</option>
                   {templates.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
                 </select>
               )}
             </div>
-            <input value={builderTitle} onChange={(e) => setBuilderTitle(e.target.value)} placeholder="Título do treino (ex: Treino A - Pernas)" className="emf-input" />
-            <textarea value={builderDesc} onChange={(e) => setBuilderDesc(e.target.value)} rows={2} placeholder="Descrição / observações (opcional)" className="emf-input resize-none" />
+            <input value={builderTitle} onChange={(e) => setBuilderTitle(e.target.value)} placeholder="Título do treino (ex: Treino A - Pernas)" aria-label="Título do treino" className="emf-input" />
+            <textarea value={builderDesc} onChange={(e) => setBuilderDesc(e.target.value)} rows={2} placeholder="Descrição / observações (opcional)" aria-label="Descrição do treino" className="emf-input resize-none" />
             <div className="grid grid-cols-2 gap-3">
-              <select value={builderLevel} onChange={(e) => setBuilderLevel(e.target.value)} className="emf-input bg-white">
+              <select value={builderLevel} onChange={(e) => setBuilderLevel(e.target.value)} aria-label="Nível de dificuldade" className="emf-input">
                 {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
               </select>
-              <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="emf-input bg-white">
+              <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} aria-label="Atribuir treino a" className="emf-input">
                 <option value="">Atribuir a…</option>
                 <option value="template">⭐ Salvar como modelo</option>
                 {clients.map((c) => <option key={c.id} value={c.id}>{c.full_name}</option>)}
@@ -235,23 +309,54 @@ export function WorkoutsAdminPage() {
           </div>
 
           {builderItems.length === 0 ? (
-            <div className="text-center py-8 bg-white rounded-2xl border border-dashed border-gray-200">
-              <span className="text-3xl">💪</span>
-              <p className="text-sm text-gray-400 mt-2">Adicione exercícios da aba Biblioteca</p>
+            <div className="emf-card flex flex-col items-center justify-center border-dashed px-4 py-12 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-secondary/15">
+                <span className="material-icons text-primary text-3xl">add_task</span>
+              </div>
+              <p className="mt-3 text-sm font-semibold text-content">Sua ficha está vazia</p>
+              <p className="mt-1 text-xs text-content-muted">Adicione exercícios da aba Biblioteca</p>
+              <button
+                onClick={() => setActiveTab('library')}
+                className="emf-btn emf-btn-secondary mt-4"
+              >
+                <span className="material-icons text-base">menu_book</span>
+                Ir para Biblioteca
+              </button>
             </div>
           ) : (
             <div className="space-y-2">
               {builderItems.map((item, idx) => (
-                <div key={idx} className="bg-white rounded-xl border border-gray-100 p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold text-gray-800">{item.exercise?.name}</p>
-                    <button onClick={() => removeFromBuilder(idx)} className="w-6 h-6 flex items-center justify-center"><span className="material-icons text-red-400 text-sm">remove_circle</span></button>
+                <div key={idx} className="emf-card p-3">
+                  <div className="mb-3 flex items-center gap-2">
+                    <span className="material-icons cursor-grab text-content-subtle text-xl" title="Arrastar para reordenar" aria-hidden="true">drag_indicator</span>
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">{idx + 1}</span>
+                    <p className="min-w-0 flex-1 truncate text-sm font-bold text-content">{item.exercise?.name}</p>
+                    <button
+                      onClick={() => removeFromBuilder(idx)}
+                      aria-label={`Remover ${item.exercise?.name || 'exercício'} da ficha`}
+                      title="Remover da ficha"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-red-400 transition-colors hover:bg-red-500/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40"
+                    >
+                      <span className="material-icons text-lg">remove_circle</span>
+                    </button>
                   </div>
                   <div className="grid grid-cols-4 gap-2">
-                    {[['sets', 'Séries', 'number'], ['reps', 'Reps', 'text'], ['rest_seconds', 'Desc(s)', 'number'], ['suggested_load_kg', 'Carga(kg)', 'number']].map(([field, label, type]) => (
+                    {[
+                      ['sets', 'Séries', 'number', undefined],
+                      ['reps', 'Reps', 'text', undefined],
+                      ['rest_seconds', 'Desc. (s)', 'number', 'Descanso em segundos'],
+                      ['suggested_load_kg', 'Carga (kg)', 'number', 'Carga sugerida em quilos'],
+                    ].map(([field, label, type, hint]) => (
                       <div key={field}>
-                        <label className="block text-[10px] text-gray-400 mb-1">{label}</label>
-                        <input type={type} value={item[field]} onChange={(e) => updateBuilderItem(idx, field, e.target.value)} className="w-full px-2 py-1.5 rounded-lg border border-gray-200 text-xs focus:outline-none focus:border-primary transition-colors" />
+                        <label htmlFor={`builder-${idx}-${field}`} title={hint} className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-content-muted">{label}</label>
+                        <input
+                          id={`builder-${idx}-${field}`}
+                          type={type}
+                          title={hint}
+                          value={item[field]}
+                          onChange={(e) => updateBuilderItem(idx, field, e.target.value)}
+                          className="w-full rounded-lg border border-line bg-surface px-2 py-2 text-center text-xs font-semibold text-content transition-colors focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        />
                       </div>
                     ))}
                   </div>
@@ -261,8 +366,14 @@ export function WorkoutsAdminPage() {
           )}
 
           {builderItems.length > 0 && (
-            <button onClick={handleSaveWorkout} disabled={savingWorkout} className="w-full py-3 bg-primary text-white font-bold rounded-xl text-sm hover:bg-primary-dark disabled:opacity-60 active:scale-95 transition-all flex items-center justify-center gap-2">
-              {savingWorkout && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+            <button
+              onClick={handleSaveWorkout}
+              disabled={savingWorkout}
+              className="emf-btn emf-btn-primary w-full py-3 text-sm font-bold disabled:opacity-60"
+            >
+              {savingWorkout
+                ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                : <span className="material-icons text-base">save</span>}
               {assignTo === 'template' ? 'Salvar Modelo' : 'Salvar Treino'}
             </button>
           )}
@@ -273,33 +384,49 @@ export function WorkoutsAdminPage() {
       <Modal isOpen={showExModal} onClose={() => setShowExModal(false)} title={editingEx ? 'Editar Exercício' : 'Novo Exercício'}>
         <form onSubmit={handleSaveEx} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Nome</label>
-            <input value={exForm.name} onChange={(e) => setExForm((f) => ({ ...f, name: e.target.value }))} required placeholder="Nome do exercício" className="emf-input" />
+            <label htmlFor="ex-name" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-content-muted">Nome</label>
+            <input id="ex-name" value={exForm.name} onChange={(e) => setExForm((f) => ({ ...f, name: e.target.value }))} required placeholder="Nome do exercício" className="emf-input" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Grupo Muscular</label>
-            <select value={exForm.muscle_group} onChange={(e) => setExForm((f) => ({ ...f, muscle_group: e.target.value }))} className="emf-input bg-white">
+            <label htmlFor="ex-muscle" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-content-muted">Grupo Muscular</label>
+            <select id="ex-muscle" value={exForm.muscle_group} onChange={(e) => setExForm((f) => ({ ...f, muscle_group: e.target.value }))} className="emf-input">
               {MUSCLE_GROUPS.map((g) => <option key={g} value={g.toLowerCase()}>{g}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Imagem</label>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-content-muted">Imagem</label>
               <input ref={imgRef} type="file" accept="image/*" className="hidden" onChange={(e) => setExImageFile(e.target.files?.[0])} />
-              <button type="button" onClick={() => imgRef.current?.click()} className="w-full py-2.5 border border-dashed border-gray-200 rounded-xl text-xs text-gray-500 hover:border-primary transition-colors">
-                {exImageFile ? exImageFile.name : exForm.image_url ? '✓ Imagem atual' : 'Escolher imagem'}
+              <button
+                type="button"
+                onClick={() => imgRef.current?.click()}
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-line bg-muted py-3 text-xs font-medium text-content-muted transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 min-h-[44px]"
+              >
+                <span className="material-icons text-base">{exImageFile || exForm.image_url ? 'check_circle' : 'image'}</span>
+                {exImageFile ? exImageFile.name : exForm.image_url ? 'Imagem atual' : 'Escolher imagem'}
               </button>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Vídeo</label>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-content-muted">Vídeo</label>
               <input ref={vidRef} type="file" accept="video/*" className="hidden" onChange={(e) => setExVideoFile(e.target.files?.[0])} />
-              <button type="button" onClick={() => vidRef.current?.click()} className="w-full py-2.5 border border-dashed border-gray-200 rounded-xl text-xs text-gray-500 hover:border-primary transition-colors">
-                {exVideoFile ? exVideoFile.name : exForm.video_url ? '✓ Vídeo atual' : 'Escolher vídeo'}
+              <button
+                type="button"
+                onClick={() => vidRef.current?.click()}
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-line bg-muted py-3 text-xs font-medium text-content-muted transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 min-h-[44px]"
+              >
+                <span className="material-icons text-base">{exVideoFile || exForm.video_url ? 'check_circle' : 'videocam'}</span>
+                {exVideoFile ? exVideoFile.name : exForm.video_url ? 'Vídeo atual' : 'Escolher vídeo'}
               </button>
             </div>
           </div>
-          <button type="submit" disabled={savingEx} className="w-full py-3 bg-primary text-white font-bold rounded-xl text-sm hover:bg-primary-dark disabled:opacity-60 active:scale-95 transition-all flex items-center justify-center gap-2">
-            {savingEx && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+          <button
+            type="submit"
+            disabled={savingEx}
+            className="emf-btn emf-btn-primary w-full py-3 text-sm font-bold disabled:opacity-60"
+          >
+            {savingEx
+              ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              : <span className="material-icons text-base">{editingEx ? 'save' : 'add'}</span>}
             {(exImageFile || exVideoFile) && savingEx ? 'Enviando arquivos...' : editingEx ? 'Salvar Alterações' : 'Criar Exercício'}
           </button>
         </form>

@@ -100,74 +100,131 @@ export function FitFlixAdminPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-800">FitFlix</h1>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary-dark active:scale-95 transition-all"
-        >
-          <span className="material-icons text-base">add</span>
-          Vídeo
-        </button>
+    <div className="space-y-6 animate-fade-in">
+      {/* Hero header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary-light p-5 shadow-pink-md">
+        <span className="material-icons pointer-events-none absolute -right-4 -top-4 text-[120px] leading-none text-white/15 select-none" aria-hidden="true">movie</span>
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+                <span className="material-icons text-xl text-white">smart_display</span>
+              </span>
+              <h1 className="text-2xl font-extrabold tracking-tight text-white">FitFlix</h1>
+            </div>
+            <p className="mt-1 text-sm text-white/80">Gerencie os vídeos e categorias da plataforma.</p>
+          </div>
+          <button
+            onClick={openCreate}
+            className="flex shrink-0 items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-primary shadow-soft transition-all hover:bg-white/90 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 min-h-[44px]"
+          >
+            <span className="material-icons text-base">add</span>
+            Vídeo
+          </button>
+        </div>
       </div>
 
       {/* Categories */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
-        <h2 className="text-sm font-bold text-gray-600">Categorias</h2>
+      <div className="emf-card p-5 space-y-4 animate-slide-up">
+        <div className="flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary/15 text-secondary">
+            <span className="material-icons text-lg">sell</span>
+          </span>
+          <h2 className="text-sm font-bold text-content">Categorias</h2>
+        </div>
         <div className="flex gap-2">
+          <label htmlFor="fitflix-new-cat" className="sr-only">Nova categoria</label>
           <input
+            id="fitflix-new-cat"
             value={newCatName}
             onChange={(e) => setNewCatName(e.target.value)}
             placeholder="Nova categoria..."
-            className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors"
+            className="emf-input flex-1"
             onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
           />
-          <button onClick={handleAddCategory} className="px-4 py-2 bg-primary/10 text-primary rounded-xl text-sm font-semibold hover:bg-primary/20 transition-colors">
+          <button
+            onClick={handleAddCategory}
+            className="flex shrink-0 items-center gap-1.5 rounded-xl bg-primary/10 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 min-h-[44px]"
+          >
+            <span className="material-icons text-base">add</span>
             Criar
           </button>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
-            <div key={cat.id} className="flex items-center gap-1.5 bg-gray-100 rounded-full pl-3 pr-2 py-1">
-              <span className="text-xs font-medium text-gray-700">{cat.name}</span>
-              <button onClick={() => handleDeleteCat(cat.id)} className="w-4 h-4 flex items-center justify-center">
-                <span className="material-icons text-gray-400 hover:text-red-400 text-xs">close</span>
-              </button>
-            </div>
-          ))}
-        </div>
+        {categories.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <span key={cat.id} className="emf-chip bg-muted text-content pr-1.5 cursor-default">
+                {cat.name}
+                <button
+                  onClick={() => handleDeleteCat(cat.id)}
+                  aria-label={`Excluir categoria ${cat.name}`}
+                  className="flex h-5 w-5 items-center justify-center rounded-full text-content-subtle transition-colors hover:bg-red-500/10 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  <span className="material-icons text-sm">close</span>
+                </button>
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-content-subtle">Nenhuma categoria ainda. Crie a primeira acima.</p>
+        )}
       </div>
 
       {/* Videos */}
       {loading ? (
-        <div className="space-y-2">{[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)}</div>
+        <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="emf-skeleton h-[76px]" />)}</div>
       ) : videos.length === 0 ? (
-        <div className="text-center py-12">
-          <span className="text-4xl">🎬</span>
-          <p className="text-sm text-gray-400 mt-2">Nenhum vídeo cadastrado.</p>
+        <div className="emf-card flex flex-col items-center justify-center py-14 text-center animate-scale-in">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <span className="material-icons text-3xl text-primary">movie</span>
+          </span>
+          <p className="mt-4 text-sm font-semibold text-content">Nenhum vídeo cadastrado</p>
+          <p className="mt-1 text-xs text-content-muted">Adicione o primeiro vídeo à plataforma.</p>
+          <button
+            onClick={openCreate}
+            className="mt-5 flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-primary-dark active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 min-h-[44px]"
+          >
+            <span className="material-icons text-base">add</span>
+            Adicionar vídeo
+          </button>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {videos.map((v) => (
-            <div key={v.id} className="bg-white rounded-xl border border-gray-100 p-3 flex items-center gap-3">
+            <div key={v.id} className="emf-card group flex items-center gap-3 p-3 transition-all hover:border-primary/30 hover:shadow-soft-lg animate-slide-up">
               {v.thumbnail_url ? (
-                <img src={v.thumbnail_url} alt="" className="w-16 h-12 rounded-lg object-cover bg-gray-100 shrink-0" />
+                <div className="relative shrink-0">
+                  <img src={v.thumbnail_url} alt={`Capa do vídeo ${v.title}`} className="h-14 w-20 rounded-xl bg-muted object-cover" />
+                  <span className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/0 transition-colors group-hover:bg-black/25">
+                    <span className="material-icons text-white opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true">play_arrow</span>
+                  </span>
+                </div>
               ) : (
-                <div className="w-16 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="flex h-14 w-20 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-secondary/15">
                   <span className="material-icons text-primary">play_circle</span>
                 </div>
               )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-800 truncate">{v.title}</p>
-                <p className="text-xs text-gray-400">{v.category || 'Sem categoria'}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-bold text-content">{v.title}</p>
+                <span className="emf-badge mt-1 bg-secondary/15 text-secondary">
+                  <span className="material-icons text-[13px]">label</span>
+                  {v.category || 'Sem categoria'}
+                </span>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => openEdit(v)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
-                  <span className="material-icons text-gray-400 text-base">edit</span>
+                <button
+                  onClick={() => openEdit(v)}
+                  aria-label={`Editar vídeo ${v.title}`}
+                  className="flex h-11 w-11 items-center justify-center rounded-xl text-content-muted transition-colors hover:bg-muted hover:text-content focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  <span className="material-icons text-base">edit</span>
                 </button>
-                <button onClick={() => handleDelete(v.id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors">
-                  <span className="material-icons text-red-400 text-base">delete</span>
+                <button
+                  onClick={() => handleDelete(v.id)}
+                  aria-label={`Excluir vídeo ${v.title}`}
+                  className="flex h-11 w-11 items-center justify-center rounded-xl text-red-500 transition-colors hover:bg-red-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  <span className="material-icons text-base">delete</span>
                 </button>
               </div>
             </div>
@@ -179,67 +236,84 @@ export function FitFlixAdminPage() {
       <Modal isOpen={showVideoModal} onClose={() => setShowVideoModal(false)} title={editingVideo ? 'Editar Vídeo' : 'Novo Vídeo'} size="lg">
         <form onSubmit={handleSave} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Título</label>
+            <label htmlFor="fitflix-title" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-content-muted">Título</label>
             <input
+              id="fitflix-title"
               value={form.title}
               onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
               required
               placeholder="Título do vídeo"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors"
+              className="emf-input"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Categoria</label>
+            <label htmlFor="fitflix-category" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-content-muted">Categoria</label>
             <select
+              id="fitflix-category"
               value={form.category}
               onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors bg-white"
+              className="emf-input"
             >
               <option value="">Sem categoria</option>
               {categories.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Descrição</label>
+            <label htmlFor="fitflix-description" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-content-muted">Descrição</label>
             <textarea
+              id="fitflix-description"
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               rows={2}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none focus:outline-none focus:border-primary transition-colors"
+              className="emf-input resize-none"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Arquivo de Vídeo</label>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-content-muted">Arquivo de Vídeo</label>
               <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => setVideoFile(e.target.files?.[0])} />
-              <button type="button" onClick={() => videoInputRef.current?.click()} className="w-full py-2.5 border border-dashed border-gray-200 rounded-xl text-xs text-gray-500 hover:border-primary transition-colors">
-                {videoFile ? videoFile.name : editingVideo?.video_url ? '✓ Vídeo atual' : 'Escolher vídeo'}
+              <button
+                type="button"
+                onClick={() => videoInputRef.current?.click()}
+                className={`flex w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed px-3 py-4 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${videoFile || editingVideo?.video_url ? 'border-primary/40 bg-primary/5 text-primary' : 'border-line text-content-muted hover:border-primary hover:text-primary'}`}
+              >
+                <span className="material-icons text-xl" aria-hidden="true">{videoFile || editingVideo?.video_url ? 'check_circle' : 'movie'}</span>
+                <span className="max-w-full truncate">{videoFile ? videoFile.name : editingVideo?.video_url ? 'Vídeo atual' : 'Escolher vídeo'}</span>
               </button>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Thumbnail</label>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-content-muted">Thumbnail</label>
               <input ref={thumbInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => setThumbFile(e.target.files?.[0])} />
-              <button type="button" onClick={() => thumbInputRef.current?.click()} className="w-full py-2.5 border border-dashed border-gray-200 rounded-xl text-xs text-gray-500 hover:border-primary transition-colors">
-                {thumbFile ? thumbFile.name : editingVideo?.thumbnail_url ? '✓ Imagem atual' : 'Escolher imagem'}
+              <button
+                type="button"
+                onClick={() => thumbInputRef.current?.click()}
+                className={`flex w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed px-3 py-4 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${thumbFile || editingVideo?.thumbnail_url ? 'border-primary/40 bg-primary/5 text-primary' : 'border-line text-content-muted hover:border-primary hover:text-primary'}`}
+              >
+                <span className="material-icons text-xl" aria-hidden="true">{thumbFile || editingVideo?.thumbnail_url ? 'check_circle' : 'image'}</span>
+                <span className="max-w-full truncate">{thumbFile ? thumbFile.name : editingVideo?.thumbnail_url ? 'Imagem atual' : 'Escolher imagem'}</span>
               </button>
             </div>
           </div>
           {saving && (thumbFile || videoFile) && (
-            <div>
-              <div className="flex justify-between text-xs text-primary font-semibold mb-1">
-                <span>{status}</span><span>{progress}%</span>
+            <div className="rounded-xl border border-line bg-muted p-3">
+              <div className="mb-2 flex justify-between text-xs font-semibold text-primary">
+                <span className="flex items-center gap-1.5">
+                  <span className="material-icons animate-spin text-sm" aria-hidden="true">progress_activity</span>
+                  {status}
+                </span>
+                <span>{progress}%</span>
               </div>
-              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
+              <div className="h-2 w-full overflow-hidden rounded-full bg-line" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Progresso do envio">
+                <div className="h-full rounded-full bg-gradient-to-r from-primary to-primary-light transition-all duration-300" style={{ width: `${progress}%` }} />
               </div>
             </div>
           )}
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-3 bg-primary text-white font-bold rounded-xl text-sm hover:bg-primary-dark disabled:opacity-60 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-pink-md transition-all hover:bg-primary-dark active:scale-95 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 min-h-[44px]"
           >
-            {saving && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+            {saving && <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />}
             {editingVideo ? 'Salvar Alterações' : 'Publicar Vídeo'}
           </button>
         </form>

@@ -45,34 +45,43 @@ export function RegisterPage() {
 
   return (
     <>
-      <h2 className="text-lg font-bold text-gray-800 mb-1 text-center">Junte-se ao Espaço Mulher</h2>
-      <p className="text-xs text-gray-400 text-center mb-5">Crie sua conta gratuitamente</p>
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <div className="text-center mb-6 animate-fade-in">
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-light text-white shadow-pink-sm">
+          <span className="material-icons text-2xl" aria-hidden="true">favorite</span>
+        </div>
+        <h2 className="text-lg font-bold text-content mb-1">Junte-se ao Espaço Mulher</h2>
+        <p className="text-xs text-content-subtle">Crie sua conta gratuitamente</p>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
         {[
-          { name: 'full_name', label: 'Nome completo', type: 'text', placeholder: 'Seu nome completo', maxLength: undefined },
-          { name: 'email', label: 'E-mail', type: 'email', placeholder: 'seu@email.com', maxLength: undefined },
-          { name: 'cpf', label: 'CPF', type: 'text', placeholder: '000.000.000-00', maxLength: 14 },
-          { name: 'phone', label: 'Celular', type: 'tel', placeholder: '(11) 99999-9999', maxLength: 15 },
-          { name: 'password', label: 'Senha', type: 'password', placeholder: 'Crie uma senha segura', maxLength: undefined },
+          { name: 'full_name', label: 'Nome completo', type: 'text', placeholder: 'Seu nome completo', maxLength: undefined, icon: 'person' },
+          { name: 'email', label: 'E-mail', type: 'email', placeholder: 'seu@email.com', maxLength: undefined, icon: 'mail' },
+          { name: 'cpf', label: 'CPF', type: 'text', placeholder: '000.000.000-00', maxLength: 14, icon: 'badge' },
+          { name: 'phone', label: 'Celular', type: 'tel', placeholder: '(11) 99999-9999', maxLength: 15, icon: 'smartphone' },
+          { name: 'password', label: 'Senha', type: 'password', placeholder: 'Crie uma senha segura', maxLength: undefined, icon: 'lock' },
         ].map((field) => (
-          <div key={field.name}>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{field.label}</label>
-            <input
-              type={field.type}
-              name={field.name}
-              value={form[field.name]}
-              onChange={handleChange}
-              required
-              placeholder={field.placeholder}
-              maxLength={field.maxLength}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
-            />
+          <div key={field.name} className="animate-slide-up">
+            <label htmlFor={`register-${field.name}`} className="block text-xs font-semibold text-content-muted uppercase tracking-wider mb-1.5">{field.label}</label>
+            <div className="relative">
+              <span className="material-icons pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-lg text-content-subtle" aria-hidden="true">{field.icon}</span>
+              <input
+                id={`register-${field.name}`}
+                type={field.type}
+                name={field.name}
+                value={form[field.name]}
+                onChange={handleChange}
+                required
+                placeholder={field.placeholder}
+                maxLength={field.maxLength}
+                className="emf-input pl-10"
+              />
+            </div>
           </div>
         ))}
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 bg-primary text-white font-bold rounded-xl text-sm uppercase tracking-wider hover:bg-primary-dark active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+          className="emf-btn-primary w-full py-3 uppercase tracking-wider"
         >
           {loading ? (
             <>
@@ -82,9 +91,9 @@ export function RegisterPage() {
           ) : 'Criar Conta e Começar'}
         </button>
       </form>
-      <div className="mt-4 text-center text-sm text-gray-500">
+      <div className="mt-5 text-center text-sm text-content-muted">
         Já tem cadastro?{' '}
-        <Link to="/login" className="text-primary font-semibold hover:underline">
+        <Link to="/login" className="text-primary font-semibold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded">
           Entrar
         </Link>
       </div>

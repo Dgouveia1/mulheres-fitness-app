@@ -118,16 +118,27 @@ export function WorkoutSessionPlayer({ workout, userId, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[60] bg-gray-900 flex flex-col">
+    <div className="fixed inset-0 z-[60] bg-gray-900 flex flex-col animate-fade-in">
       {/* Topo: progresso + fechar */}
       <div className="flex items-center gap-3 px-4 py-3 text-white">
-        <button onClick={() => onClose(false)} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+        <button
+          onClick={() => onClose(false)}
+          aria-label="Fechar treino"
+          title="Fechar treino"
+          className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        >
           <span className="material-icons">close</span>
         </button>
         <div className="flex-1">
-          <div className="text-xs text-white/60">Exercício {index + 1} de {items.length}</div>
-          <div className="h-1 bg-white/15 rounded-full mt-1 overflow-hidden">
-            <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-semibold tracking-wide text-white/80">Exercício {index + 1} de {items.length}</span>
+            <span className="text-xs font-bold tabular-nums text-white/60">{Math.round(progress)}%</span>
+          </div>
+          <div className="h-1.5 bg-white/15 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-primary-light transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
       </div>
@@ -137,7 +148,7 @@ export function WorkoutSessionPlayer({ workout, userId, onClose }) {
         {exercise?.video_url ? (
           <video src={exercise.video_url} autoPlay loop muted playsInline className="w-full h-full object-cover" />
         ) : exercise?.image_url ? (
-          <img src={exercise.image_url} alt={exercise?.name} className="w-full h-full object-cover" />
+          <img src={exercise.image_url} alt={exercise?.name ? `Demonstração do exercício ${exercise.name}` : 'Demonstração do exercício'} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-white/30">
             <span className="material-icons text-6xl">fitness_center</span>
@@ -146,14 +157,20 @@ export function WorkoutSessionPlayer({ workout, userId, onClose }) {
 
         {/* Overlay de descanso */}
         {resting && (
-          <div className="absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center gap-4 text-white">
-            <div className="text-sm uppercase tracking-widest text-white/60">Descanso</div>
-            <div className="text-7xl font-bold tabular-nums">{timeLeft}s</div>
-            <div className="text-sm text-white/60">Próxima: Série {Math.min(currentSet, totalSets)} de {totalSets}</div>
+          <div className="absolute inset-0 bg-gray-900/90 backdrop-blur-sm flex flex-col items-center justify-center gap-4 text-white animate-fade-in">
+            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-1">
+              <span className="material-icons text-3xl text-primary-light animate-float">self_improvement</span>
+            </div>
+            <div className="text-sm font-semibold uppercase tracking-widest text-white/80">Descanso</div>
+            <div className="text-7xl font-bold tabular-nums leading-none">{timeLeft}s</div>
+            <div className="text-sm text-white/80">Próxima: Série {Math.min(currentSet, totalSets)} de {totalSets}</div>
             <button
               onClick={() => { setResting(false); setTimeLeft(0) }}
-              className="mt-2 px-6 py-2.5 bg-white/15 hover:bg-white/25 rounded-full text-sm font-semibold transition-colors"
+              aria-label="Pular descanso"
+              title="Pular descanso"
+              className="mt-2 inline-flex items-center gap-1.5 min-h-[44px] px-6 py-2.5 bg-white/15 hover:bg-white/25 active:scale-95 rounded-full text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
+              <span className="material-icons text-base">skip_next</span>
               Pular descanso
             </button>
           </div>
@@ -161,10 +178,10 @@ export function WorkoutSessionPlayer({ workout, userId, onClose }) {
       </div>
 
       {/* Painel de controle */}
-      <div className="bg-white rounded-t-3xl px-5 pt-5 pb-6 space-y-4 shadow-2xl">
+      <div className="bg-surface text-content rounded-t-3xl px-5 pt-5 pb-6 space-y-4 shadow-soft-lg border-t border-line animate-slide-up">
         <div>
-          <h2 className="text-lg font-bold text-gray-800">{exercise?.name}</h2>
-          <p className="text-xs text-gray-400">
+          <h2 className="text-lg font-bold text-content">{exercise?.name}</h2>
+          <p className="text-xs text-content-muted mt-0.5">
             {MUSCLE_LABELS[exercise?.muscle_group] || exercise?.muscle_group || 'Geral'} • {totalSets} séries de {item.reps || 10} reps
             {item.rest_seconds > 0 && ` • descanso ${item.rest_seconds}s`}
           </p>
@@ -178,29 +195,31 @@ export function WorkoutSessionPlayer({ workout, userId, onClose }) {
             return (
               <div
                 key={n}
-                className={`flex-1 h-2 rounded-full ${state === 'done' ? 'bg-emerald-500' : state === 'active' ? 'bg-primary' : 'bg-gray-200'}`}
+                className={`flex-1 h-2 rounded-full transition-colors duration-200 ${state === 'done' ? 'bg-emerald-500' : state === 'active' ? 'bg-gradient-to-r from-primary to-primary-light' : 'bg-muted'}`}
               />
             )
           })}
         </div>
-        <div className="text-center text-sm font-semibold text-gray-600">Série {Math.min(currentSet, totalSets)} de {totalSets}</div>
+        <div className="text-center text-sm font-semibold text-content-muted">Série {Math.min(currentSet, totalSets)} de {totalSets}</div>
 
         {/* Inputs carga / reps */}
         <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Carga (kg)</span>
+          <label htmlFor="wsp-load" className="block">
+            <span className="block text-xs font-semibold text-content-muted uppercase tracking-wider mb-1">Carga (kg)</span>
             <input
+              id="wsp-load"
               type="number" inputMode="decimal" min="0" step="0.5" value={load}
               onChange={(e) => setLoad(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-center text-lg font-bold text-gray-800 focus:outline-none focus:border-primary"
+              className="emf-input w-full px-4 py-3 rounded-xl text-center text-lg font-bold"
             />
           </label>
-          <label className="block">
-            <span className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Repetições</span>
+          <label htmlFor="wsp-reps" className="block">
+            <span className="block text-xs font-semibold text-content-muted uppercase tracking-wider mb-1">Repetições</span>
             <input
+              id="wsp-reps"
               type="number" inputMode="numeric" min="0" step="1" value={reps}
               onChange={(e) => setReps(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-center text-lg font-bold text-gray-800 focus:outline-none focus:border-primary"
+              className="emf-input w-full px-4 py-3 rounded-xl text-center text-lg font-bold"
             />
           </label>
         </div>
@@ -208,9 +227,20 @@ export function WorkoutSessionPlayer({ workout, userId, onClose }) {
         <button
           onClick={completeSet}
           disabled={saving || resting}
-          className={`w-full py-4 rounded-2xl text-white font-bold text-base active:scale-[0.99] transition-all disabled:opacity-60 ${isLastSet ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-primary hover:bg-primary-dark'}`}
+          aria-busy={saving}
+          className={`w-full min-h-[44px] py-4 rounded-2xl text-white font-bold text-base shadow-soft active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 flex items-center justify-center gap-2 ${isLastSet ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-gradient-to-br from-primary to-primary-light hover:from-primary-dark hover:to-primary'}`}
         >
-          {actionLabel}
+          {saving ? (
+            <>
+              <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Salvando…
+            </>
+          ) : (
+            <>
+              {isLastSet && <span className="material-icons text-xl">{isLastExercise ? 'celebration' : 'check_circle'}</span>}
+              {actionLabel}
+            </>
+          )}
         </button>
       </div>
     </div>

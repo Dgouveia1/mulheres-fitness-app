@@ -73,15 +73,30 @@ export function NutritionAdminPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-xl font-bold text-gray-800">Nutrição</h1>
+    <div className="space-y-5 animate-fade-in">
+      {/* Hero header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary-light p-5 shadow-soft-lg">
+        <span className="material-icons pointer-events-none absolute -right-4 -top-4 select-none text-[120px] text-white/15">restaurant_menu</span>
+        <div className="relative min-w-0">
+          <h1 className="text-2xl font-extrabold text-white drop-shadow-sm">Nutrição</h1>
+          <p className="mt-1 text-sm text-white/80">Monte planos alimentares e salve modelos reutilizáveis</p>
+        </div>
+      </div>
 
       {/* Header do plano */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold text-gray-600">Informações do Plano</h2>
+      <div className="emf-card space-y-3 p-4 animate-slide-up">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-content">
+            <span className="material-icons text-base text-primary">description</span>
+            Informações do Plano
+          </h2>
           {templates.length > 0 && (
-            <select onChange={(e) => { loadTemplate(e.target.value); e.target.value = '' }} defaultValue="" className="text-xs px-2 py-1 rounded-lg border border-gray-200 bg-white text-gray-600 focus:outline-none focus:border-primary">
+            <select
+              aria-label="Carregar modelo de plano"
+              onChange={(e) => { loadTemplate(e.target.value); e.target.value = '' }}
+              defaultValue=""
+              className="rounded-lg border border-line bg-surface px-2 py-1.5 text-xs text-content-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus:border-primary"
+            >
               <option value="">Carregar modelo…</option>
               {templates.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
             </select>
@@ -89,7 +104,7 @@ export function NutritionAdminPage() {
         </div>
         <input value={dietTitle} onChange={(e) => setDietTitle(e.target.value)} placeholder="Nome do plano alimentar" className="emf-input" />
         <textarea value={dietDesc} onChange={(e) => setDietDesc(e.target.value)} rows={2} placeholder="Descrição / observações (opcional)" className="emf-input resize-none" />
-        <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="emf-input bg-white">
+        <select value={assignTo} onChange={(e) => setAssignTo(e.target.value)} className="emf-input">
           <option value="">Atribuir a…</option>
           <option value="template">⭐ Salvar como modelo</option>
           {clients.map((c) => <option key={c.id} value={c.id}>{c.full_name}</option>)}
@@ -98,33 +113,90 @@ export function NutritionAdminPage() {
 
       {/* Refeições */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold text-gray-600">Refeições</h2>
-          <button onClick={addMeal} className="flex items-center gap-1 text-xs text-primary font-semibold hover:text-primary-dark transition-colors">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-content">
+            <span className="material-icons text-base text-primary">restaurant</span>
+            Refeições
+            <span className="emf-badge bg-primary/10 text-primary">{meals.length}</span>
+          </h2>
+          <button
+            onClick={addMeal}
+            aria-label="Adicionar refeição"
+            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary/10 px-3.5 text-xs font-bold text-primary transition-colors hover:bg-primary/15 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
             <span className="material-icons text-base">add_circle</span>
             Adicionar
           </button>
         </div>
 
         {meals.map((meal, mIdx) => (
-          <div key={mIdx} className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 grid grid-cols-2 gap-2">
-                <input value={meal.name} onChange={(e) => updateMeal(mIdx, 'name', e.target.value)} placeholder="Ex: Café da manhã" className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors" />
-                <input type="time" value={meal.time} onChange={(e) => updateMeal(mIdx, 'time', e.target.value)} className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors" />
+          <div key={mIdx} className="emf-card space-y-3 p-4 animate-scale-in transition-shadow hover:shadow-soft-lg">
+            <div className="flex items-start gap-2">
+              <div className="grid flex-1 grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
+                <div className="relative">
+                  <span className="material-icons pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-base text-content-subtle">lunch_dining</span>
+                  <input
+                    value={meal.name}
+                    onChange={(e) => updateMeal(mIdx, 'name', e.target.value)}
+                    placeholder="Ex: Café da manhã"
+                    aria-label="Nome da refeição"
+                    className="w-full rounded-xl border border-line bg-surface py-2 pl-10 pr-3 text-sm font-semibold text-content placeholder:font-normal placeholder:text-content-subtle transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus:border-primary"
+                  />
+                </div>
+                <div className="relative">
+                  <span className="material-icons pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-base text-content-subtle">schedule</span>
+                  <input
+                    type="time"
+                    value={meal.time}
+                    onChange={(e) => updateMeal(mIdx, 'time', e.target.value)}
+                    aria-label="Horário da refeição"
+                    className="w-full rounded-xl border border-line bg-surface py-2 pl-10 pr-3 text-sm text-content transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus:border-primary sm:w-36"
+                  />
+                </div>
               </div>
-              <button onClick={() => removeMeal(mIdx)} className="w-8 h-8 flex items-center justify-center"><span className="material-icons text-red-400 text-base">remove_circle</span></button>
+              <button
+                onClick={() => removeMeal(mIdx)}
+                aria-label="Remover refeição"
+                title="Remover refeição"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              >
+                <span className="material-icons text-base">remove_circle</span>
+              </button>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 border-t border-line pt-3">
               {meal.foods.map((food, fIdx) => (
-                <div key={fIdx} className="flex gap-2">
-                  <input value={food.food_item} onChange={(e) => updateFood(mIdx, fIdx, 'food_item', e.target.value)} placeholder="Alimento" className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-primary transition-colors" />
-                  <input value={food.portion} onChange={(e) => updateFood(mIdx, fIdx, 'portion', e.target.value)} placeholder="Porção" className="w-28 px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-primary transition-colors" />
-                  <button onClick={() => removeFood(mIdx, fIdx)} className="w-8 h-8 flex items-center justify-center"><span className="material-icons text-gray-300 text-sm hover:text-red-400 transition-colors">close</span></button>
+                <div key={fIdx} className="flex items-center gap-2">
+                  <input
+                    value={food.food_item}
+                    onChange={(e) => updateFood(mIdx, fIdx, 'food_item', e.target.value)}
+                    placeholder="Alimento"
+                    aria-label="Alimento"
+                    className="min-w-0 flex-1 rounded-xl border border-line bg-muted px-3 py-2 text-xs text-content placeholder:text-content-subtle transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus:border-primary focus:bg-surface"
+                  />
+                  <input
+                    value={food.portion}
+                    onChange={(e) => updateFood(mIdx, fIdx, 'portion', e.target.value)}
+                    placeholder="Porção"
+                    aria-label="Porção"
+                    className="w-24 shrink-0 rounded-xl border border-line bg-muted px-3 py-2 text-xs text-content placeholder:text-content-subtle transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus:border-primary focus:bg-surface sm:w-28"
+                  />
+                  <button
+                    onClick={() => removeFood(mIdx, fIdx)}
+                    aria-label="Remover alimento"
+                    title="Remover alimento"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-content-subtle transition-colors hover:bg-red-500/10 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  >
+                    <span className="material-icons text-sm">close</span>
+                  </button>
                 </div>
               ))}
-              <button type="button" onClick={() => addFood(mIdx)} className="text-xs text-primary font-semibold flex items-center gap-1 hover:text-primary-dark transition-colors">
+              <button
+                type="button"
+                onClick={() => addFood(mIdx)}
+                aria-label="Adicionar alimento"
+                className="inline-flex min-h-[44px] items-center gap-1.5 text-xs font-semibold text-primary transition-colors hover:text-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-lg px-1"
+              >
                 <span className="material-icons text-sm">add</span>
                 Adicionar alimento
               </button>
@@ -133,8 +205,13 @@ export function NutritionAdminPage() {
         ))}
       </div>
 
-      <button onClick={handleSave} disabled={saving} className="w-full py-3 bg-primary text-white font-bold rounded-xl text-sm hover:bg-primary-dark disabled:opacity-60 active:scale-95 transition-all flex items-center justify-center gap-2">
-        {saving && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="emf-btn-primary w-full py-3 text-sm font-bold"
+      >
+        {saving && <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />}
+        {!saving && <span className="material-icons text-base">{assignTo === 'template' ? 'bookmark' : 'send'}</span>}
         {assignTo === 'template' ? 'Salvar Modelo' : 'Salvar Plano Alimentar'}
       </button>
     </div>

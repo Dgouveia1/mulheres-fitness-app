@@ -2,14 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   Tokens de tema (dirigem as cores semânticas do preset).
+   Valores em canais RGB separados por espaço p/ usar com
+   rgb(var(--x) / <alpha>). Tema claro em :root, escuro em .dark.
+   ============================================================ */
 @layer base {
+  :root {
+    --background: 253 242 248;   /* #fdf2f8 rosa muito claro */
+    --surface: 255 255 255;      /* #ffffff cards */
+    --surface-2: 250 244 248;    /* #faf4f8 superfície elevada sutil */
+    --muted: 247 238 244;        /* fundo sutil (antigo gray-50/100) */
+    --line: 240 226 235;         /* #f0e2eb bordas */
+    --content: 31 41 55;         /* #1f2937 texto principal */
+    --content-muted: 100 116 139;/* #64748b texto secundário (>=4.5:1) */
+    --content-subtle: 148 163 184;/* #94a3b8 placeholders/hints */
+    --secondary: 167 139 250;    /* #a78bfa lavanda */
+    --secondary-light: 196 181 253;/* #c4b5fd */
+    color-scheme: light;
+  }
+
+  .dark {
+    --background: 23 13 19;       /* #170d13 plum near-black */
+    --surface: 36 22 32;         /* #241620 */
+    --surface-2: 48 30 42;       /* #301e2a */
+    --muted: 46 29 40;           /* #2e1d28 */
+    --line: 62 44 56;            /* #3e2c38 ~ rgba(255,255,255,.09) */
+    --content: 246 238 242;      /* #f6eef2 */
+    --content-muted: 195 174 185;/* #c3aeb9 */
+    --content-subtle: 150 130 142;/* #96828e */
+    --secondary: 196 181 253;
+    --secondary-light: 216 205 255;
+    color-scheme: dark;
+  }
+
   * {
     -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    @apply font-main bg-background text-gray-800 antialiased;
+    @apply font-main bg-background text-content antialiased;
     font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   a {
@@ -18,9 +52,66 @@
 }
 
 @layer components {
-  /* Input/select padrão de formulários (usado nos modais de agenda, etc.) */
+  /* Input/select padrão de formulários (nome preservado — usado em muitas telas). */
   .emf-input {
-    @apply w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary transition-colors;
+    @apply w-full px-4 py-2.5 rounded-xl border border-line bg-surface text-sm text-content placeholder:text-content-subtle transition-all;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus:border-primary;
+  }
+
+  /* Cards */
+  .emf-card {
+    @apply bg-surface border border-line rounded-2xl shadow-soft;
+  }
+  .emf-card-glass {
+    @apply rounded-2xl border border-white/20 shadow-glass;
+    background-color: rgb(var(--surface) / 0.7);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+  }
+
+  /* Botões */
+  .emf-btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200;
+    @apply active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40;
+  }
+  .emf-btn-primary {
+    @apply emf-btn bg-primary text-white hover:bg-primary-dark shadow-pink-md;
+  }
+  .emf-btn-secondary {
+    @apply emf-btn bg-muted text-content hover:bg-line;
+  }
+  .emf-btn-ghost {
+    @apply emf-btn bg-transparent text-content-muted hover:bg-muted;
+  }
+
+  /* Badges & chips */
+  .emf-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold;
+  }
+  .emf-chip {
+    @apply inline-flex items-center gap-1.5 shrink-0 px-3.5 py-2 rounded-full text-xs font-semibold cursor-pointer transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40;
+  }
+
+  /* Navbars / superfícies glass (header, bottom-nav, sidebar) */
+  .glass-nav {
+    @apply border-line;
+    background-color: rgb(var(--surface) / 0.8);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  /* Skeleton com shimmer */
+  .emf-skeleton {
+    @apply relative overflow-hidden bg-muted rounded-xl;
+  }
+  .emf-skeleton::after {
+    content: '';
+    @apply absolute inset-0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgb(var(--content) / 0.06), transparent);
+    animation: shimmer 1.5s infinite;
   }
 }
 
@@ -42,6 +133,9 @@
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
 }
 
 /* Material Icons sizing */
@@ -57,4 +151,21 @@
 
 .animate-spin-slow {
   animation: spin 1s linear infinite;
+}
+
+/* Shimmer keyframe (skeletons) */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* Respeita preferência de redução de movimento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

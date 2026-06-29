@@ -41,34 +41,36 @@ export function LoginPage({ allowedRoles = [], redirectTo = '/', registerPath = 
 
   return (
     <>
-      <h2 className="text-lg font-bold text-gray-800 mb-6 text-center">Entrar na sua conta</h2>
+      <h2 className="text-lg font-bold text-content mb-6 text-center">Entrar na sua conta</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">E-mail</label>
+          <label htmlFor="login-email" className="block text-xs font-semibold text-content-muted uppercase tracking-wider mb-1.5">E-mail</label>
           <input
+            id="login-email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="seu@email.com"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+            className="emf-input"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Senha</label>
+          <label htmlFor="login-password" className="block text-xs font-semibold text-content-muted uppercase tracking-wider mb-1.5">Senha</label>
           <input
+            id="login-password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="Sua senha"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+            className="emf-input"
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 bg-primary text-white font-bold rounded-xl text-sm uppercase tracking-wider hover:bg-primary-dark active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="emf-btn-primary w-full py-3 uppercase tracking-wider"
         >
           {loading ? (
             <>
@@ -79,7 +81,7 @@ export function LoginPage({ allowedRoles = [], redirectTo = '/', registerPath = 
         </button>
       </form>
       {registerPath && (
-        <div className="mt-5 text-center text-sm text-gray-500">
+        <div className="mt-5 text-center text-sm text-content-muted">
           Ainda não tem conta?{' '}
           <Link to={registerPath} className="text-primary font-semibold hover:underline">
             Criar conta

@@ -8,7 +8,7 @@ function Spinner() {
     <div className="flex h-screen items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-4">
         <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-        <span className="text-sm text-gray-500 font-main">Carregando...</span>
+        <span className="text-sm text-content-muted font-main">Carregando...</span>
       </div>
     </div>
   )
@@ -30,11 +30,13 @@ function WrongAppScreen() {
       : []
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 text-center bg-gradient-to-br from-pink-50 to-white">
-      <span className="material-icons text-5xl text-gray-300">lock_person</span>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 text-center bg-gradient-to-br from-primary/5 to-background">
+      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+        <span className="material-icons text-4xl text-primary">lock_person</span>
+      </div>
       <div>
-        <p className="text-sm font-semibold text-gray-700">Sua conta não tem acesso a este aplicativo.</p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-sm font-semibold text-content">Sua conta não tem acesso a este aplicativo.</p>
+        <p className="text-xs text-content-muted mt-1">
           {role ? `Perfil atual: ${ROLE_LABELS[role] || role}.` : 'Perfil não reconhecido.'} Use o aplicativo correto abaixo.
         </p>
       </div>
@@ -43,14 +45,14 @@ function WrongAppScreen() {
           <a
             key={t.href}
             href={t.href}
-            className="px-5 py-2.5 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary-dark active:scale-95 transition-all"
+            className="px-5 py-2.5 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary-dark active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
             {t.label}
           </a>
         ))}
         <button
           onClick={signOut}
-          className="px-5 py-2.5 text-red-500 rounded-full text-sm font-semibold hover:bg-red-50 transition-all"
+          className="px-5 py-2.5 text-red-500 rounded-full text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-500/10 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40"
         >
           Sair
         </button>
