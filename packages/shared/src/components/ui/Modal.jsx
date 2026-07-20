@@ -3,6 +3,11 @@ import { useEffect, useRef } from 'react'
 // API preservada: { isOpen, onClose, title, children, size }.
 export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   const panelRef = useRef(null)
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
 
   useEffect(() => {
     if (!isOpen) return
@@ -17,7 +22,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
 
     function onKeyDown(e) {
       if (e.key === 'Escape') {
-        onClose?.()
+        onCloseRef.current?.()
         return
       }
       if (e.key !== 'Tab' || !panel) return
@@ -43,7 +48,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
       document.body.style.overflow = ''
       document.removeEventListener('keydown', onKeyDown)
     }
-  }, [isOpen, onClose])
+  }, [isOpen])
 
   if (!isOpen) return null
 
