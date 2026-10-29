@@ -110,7 +110,7 @@ function waMessage(appt) {
   const tipo = TYPE_META[appt.type]?.label || appt.type
   const dataBR = appt.date ? appt.date.split('-').reverse().join('/') : ''
   const hora = (appt.time || '').slice(0, 5)
-  const msg = `Olá ${first}! Seu agendamento de *${tipo}* no Espaço Mulher Fitness está confirmado para o dia *${dataBR}* às *${hora}*. 💪`
+  const msg = `Olá ${first}! Seu agendamento de *${tipo}* na Espaço Mulher Fitness está confirmado para o dia *${dataBR}* às *${hora}*. 💪`
   return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`
 }
 
